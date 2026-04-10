@@ -30,5 +30,15 @@ impl App {
 
   fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
+
+    commands.spawn(SpriteBundle {
+      sprite: Sprite {
+        color: Color::rgb(0.2, 0.7, 0.9),
+        custom_size: Some(Vec2::new(100.0, 100.0)),
+        ..default()
+      },
+      transform: Transform::from_xyz(-200.0, 0.0, 0.0),
+      ..default()
+    });
   }
 }
