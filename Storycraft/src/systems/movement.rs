@@ -1,12 +1,6 @@
 use bevy::prelude::*;
-
 use crate::player::{Player, PLAYER_VELOCITY};
 use crate::camera::MainCamera;
-
-
-
-
-
 
 
 
@@ -23,7 +17,7 @@ pub fn player_movement(
   time: Res<Time>,
   player_transform: &mut Transform
 ) {
-  let speed = PLAYER_VELOCITY * time.delta_seconds();
+  let speed = PLAYER_VELOCITY * time.delta_secs();
 
   if keyboard.pressed(KeyCode::KeyW) {
     player_transform.translation.y += speed;
@@ -43,13 +37,12 @@ pub fn player_movement(
 pub fn movement_system(
   keyboard: Res<ButtonInput<KeyCode>>,
   time: Res<Time>,
-  mut camera: Query<&mut Transform, (With<MainCamera>, Without<Player>)>,
-  mut player: Query<&mut Transform, With<Player>>,
+  camera: Single<&mut Transform, (With<MainCamera>, Without<Player>)>,
+  player: Single<&mut Transform, With<Player>>,
 ) {
-  if let Ok(mut player_transform) = player.get_single_mut() {
-    if let Ok(mut camera_transform) = camera.get_single_mut(){
-      player_movement(keyboard, time, &mut player_transform);
-      camera_follow_player(&mut camera_transform, &player_transform);
-    }
-  }
+  let mut player_transform = player.into_inner();
+  let mut camera_transform = camera.into_inner();
+
+  player_movement(keyboard, time, &mut player_transform);
+  camera_follow_player(&mut camera_transform, &player_transform);
 }

@@ -1,18 +1,11 @@
 use bevy::prelude::*;
-
-mod systems;
 use systems::movement::movement_system;
-
-mod camera;
 use camera::{MainCamera};
-
-mod player;
 use player::{Player};
 
-
-
-
-
+mod systems;
+mod camera;
+mod player;
 
 
 
@@ -34,9 +27,8 @@ fn setup(
 
   // add Counter
   let texture = asset_server.load("Restaurant/Counter/Counter.png");
-  commands.spawn(SpriteBundle {
-    texture,
-    transform: Transform::from_xyz(0.0, 0.0, 0.0),
-    ..default()
-  });
+  commands.spawn((
+    Sprite::from_image(texture),
+    Transform::from_xyz(0.0, 0.0, 0.0)
+  ));
 }
