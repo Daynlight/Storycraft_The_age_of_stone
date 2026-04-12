@@ -1,10 +1,13 @@
 use bevy::prelude::*;
 
+mod systems;
+use systems::movement::movement_system;
+
 mod camera;
-use camera::{MainCamera, camera_move_system};
+use camera::{MainCamera};
 
 mod player;
-use player::{Player, player_move_system};
+use player::{Player};
 
 
 
@@ -17,8 +20,7 @@ fn main() {
   let mut app: ::bevy::app::App = ::bevy::app::App::new();
   app.add_plugins(DefaultPlugins);
   app.add_systems(Startup, setup);
-  app.add_systems(Update, player_move_system);
-  app.add_systems(Update, camera_move_system);
+  app.add_systems(Update, movement_system);
   app.run();
 }
 
