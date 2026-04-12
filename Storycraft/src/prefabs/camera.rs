@@ -1,10 +1,11 @@
-use bevy::prelude::*;
+use bevy::prelude::*; 
+
+use crate::config;
 
 
 
 #[derive(Component)]
 pub struct MainCamera;
-const CAMERA_ZOOM: f32 = 0.5;
 
 
 impl MainCamera{
@@ -15,7 +16,7 @@ impl MainCamera{
       Camera2d,
       MainCamera,
       Projection::Orthographic(OrthographicProjection {
-        scale: CAMERA_ZOOM,
+        scale: config::settings::CAMERA_ZOOM,
         ..OrthographicProjection::default_2d()
       })
     ));

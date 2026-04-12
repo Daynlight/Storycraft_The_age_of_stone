@@ -1,48 +1,67 @@
 use bevy::prelude::*;
-use crate::player::{Player, PLAYER_VELOCITY};
-use crate::camera::MainCamera;
+
+use crate::prefabs;
+use crate::config;
+use crate::components;
 
 
 
 pub fn camera_follow_player(
   camera: &mut Transform,
-  player: &Transform,
+  player: &components::movement::Movement,
 ) {
-  camera.translation = player.translation;
+  let position: Vec2 = player.get_current_position();
+  camera.translation = Vec3::new(position.x, position.y, camera.translation.z);
+}
+
+
+pub fn get_direction(
+  keyboard: Res<ButtonInput<KeyCode>>,
+) -> Vec2 {
+  let mut direction = Vec2::ZERO;
+
+  if keyboard.pressed(config::controls::UP) {
+    direction.y = 1.0;
+  }
+  if keyboard.pressed(config::controls::DOWN) {
+    direction.y = -1.0;
+  }
+  if keyboard.pressed(config::controls::LEFT) {
+    direction.x = -1.0;
+  }
+  if keyboard.pressed(config::controls::RIGHT) {
+    direction.x = 1.0;
+  }
+
+  return direction;
 }
 
 
 pub fn player_movement(
   keyboard: Res<ButtonInput<KeyCode>>,
   time: Res<Time>,
-  player_transform: &mut Transform
+  player_movement: &mut components::movement::Movement,
+  player_transform: &mut Transform,
 ) {
-  let speed = PLAYER_VELOCITY * time.delta_secs();
+  let direction = get_direction(keyboard);
 
-  if keyboard.pressed(KeyCode::KeyW) {
-    player_transform.translation.y += speed;
-  }
-  if keyboard.pressed(KeyCode::KeyS) {
-    player_transform.translation.y -= speed;
-  }
-  if keyboard.pressed(KeyCode::KeyA) {
-    player_transform.translation.x -= speed;
-  }
-  if keyboard.pressed(KeyCode::KeyD) {
-    player_transform.translation.x += speed;
-  }
+  player_movement.set_movement(direction, time.delta_secs());
+  player_movement.update_current_position(time.delta_secs());
+
+  let current_position = player_movement.get_current_position();
+  player_transform.translation = Vec3::new(current_position.x, current_position.y, player_transform.translation.z);
 }
 
 
 pub fn movement_system(
   keyboard: Res<ButtonInput<KeyCode>>,
   time: Res<Time>,
-  camera: Single<&mut Transform, (With<MainCamera>, Without<Player>)>,
-  player: Single<&mut Transform, With<Player>>,
+  camera: Single<&mut Transform, (With<prefabs::camera::MainCamera>, Without<prefabs::player::Player>)>,
+  player: Single<(&mut components::movement::Movement, &mut Transform), With<prefabs::player::Player>>,
 ) {
   let mut player_transform = player.into_inner();
   let mut camera_transform = camera.into_inner();
 
-  player_movement(keyboard, time, &mut player_transform);
-  camera_follow_player(&mut camera_transform, &player_transform);
+  player_movement(keyboard, time, &mut player_transform.0, &mut player_transform.1 );
+  camera_follow_player(&mut camera_transform, &player_transform.0);
 }
