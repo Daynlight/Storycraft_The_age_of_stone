@@ -8,7 +8,7 @@ use crate::components;
 pub struct Player;
 pub const PLAYER_VELOCITY: f32 = 200.0;
 pub const PLAYER_ACCELERATION: f32 = 300.0;
-pub const PLAYER_RESISTANCE: f32 = 400.0;
+pub const PLAYER_RESISTANCE: f32 = 600.0;
 
 
 impl Player{

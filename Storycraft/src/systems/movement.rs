@@ -6,7 +6,7 @@ use crate::components;
 
 
 
-pub fn camera_follow_player(
+pub fn update_camera_to_follow_player(
   camera: &mut Transform,
   player: &components::movement::Movement,
 ) {
@@ -15,21 +15,21 @@ pub fn camera_follow_player(
 }
 
 
-pub fn get_direction(
+pub fn get_direction_base_on_controls(
   keyboard: Res<ButtonInput<KeyCode>>,
 ) -> Vec2 {
   let mut direction = Vec2::ZERO;
 
-  if keyboard.pressed(config::controls::UP) {
+  if keyboard.any_pressed(config::controls::UP) {
     direction.y = 1.0;
   }
-  if keyboard.pressed(config::controls::DOWN) {
+  if keyboard.any_pressed(config::controls::DOWN) {
     direction.y = -1.0;
   }
-  if keyboard.pressed(config::controls::LEFT) {
+  if keyboard.any_pressed(config::controls::LEFT) {
     direction.x = -1.0;
   }
-  if keyboard.pressed(config::controls::RIGHT) {
+  if keyboard.any_pressed(config::controls::RIGHT) {
     direction.x = 1.0;
   }
 
@@ -43,10 +43,9 @@ pub fn player_movement(
   player_movement: &mut components::movement::Movement,
   player_transform: &mut Transform,
 ) {
-  let direction = get_direction(keyboard);
+  let direction = get_direction_base_on_controls(keyboard);
 
-  player_movement.set_movement(direction, time.delta_secs());
-  player_movement.update_current_position(time.delta_secs());
+  player_movement.make_move(direction, time.delta_secs());
 
   let current_position = player_movement.get_current_position();
   player_transform.translation = Vec3::new(current_position.x, current_position.y, player_transform.translation.z);
@@ -63,5 +62,5 @@ pub fn movement_system(
   let mut camera_transform = camera.into_inner();
 
   player_movement(keyboard, time, &mut player_transform.0, &mut player_transform.1 );
-  camera_follow_player(&mut camera_transform, &player_transform.0);
+  update_camera_to_follow_player(&mut camera_transform, &player_transform.0);
 }

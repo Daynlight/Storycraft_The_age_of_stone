@@ -31,14 +31,14 @@ impl Movement{
   }
 
 
-  pub fn update_current_position(&mut self, delta_time: f32) {
+  fn update_current_position(&mut self, delta_time: f32) {
     self.current_position += self.direction * self.current_velocity * delta_time;
   }
 
 
-  pub fn set_movement(&mut self, direction: Vec2, delta_time: f32) {
+  pub fn make_move(&mut self, direction: Vec2, delta_time: f32) {
     // [TODO] Energy loss at direction change relative to angle
-    // [TODO] Fraction of direction angle
+    let direction = direction.normalize_or_zero();
 
     // resistance
     if self.current_velocity < 0.0{
@@ -46,17 +46,31 @@ impl Movement{
       self.direction = Vec2::ZERO;
       return;
     }
+
     if direction == Vec2::ZERO {
-      self.current_velocity -= self.resistance * delta_time;
+      if self.resistance == 0.0 {
+        self.current_velocity -= self.resistance * delta_time;
+      }
+      else {
+        self.current_velocity -= self.resistance * delta_time;
+      }
     }
-    
+
+    // change direction resistance
+    let angle = self.direction.perp_dot(direction);
+    let energy_loss = ((angle / 2.0) * self.current_velocity).abs();
+    self.current_velocity -= energy_loss;
+
     // acceleration
     if self.current_velocity > self.max_velocity {
       self.current_velocity = self.max_velocity;
     }
+
     if direction != Vec2::ZERO {
       self.current_velocity += self.acceleration * delta_time;
       self.direction = direction;
     }
+
+    self.update_current_position(delta_time);
   }
 }
