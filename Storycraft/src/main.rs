@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::components::alt_movement::MovementPlugin;
+
 mod config;
 mod systems;
 mod prefabs;
@@ -8,11 +10,12 @@ mod components;
 
 
 fn main() {
-  let mut app: ::bevy::app::App = ::bevy::app::App::new();
-  app.add_plugins(DefaultPlugins);
-  app.add_systems(Startup, setup);
-  app.add_systems(Update, systems::movement::movement_system);
-  app.run();
+  App::new()
+    .add_plugins(DefaultPlugins)
+    .add_systems(Startup, setup)
+    .add_systems(PreUpdate, systems::movement::movement_system)
+    .add_plugins(MovementPlugin)
+    .run();
 }
 
 

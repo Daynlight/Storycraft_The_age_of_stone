@@ -58,7 +58,7 @@ impl Movement{
 
     // change direction resistance
     let angle = self.direction.perp_dot(direction);
-    let energy_loss = ((angle / 2.0) * self.current_velocity).abs();
+    let energy_loss = ((angle / 5.0) * self.current_velocity).abs();
     self.current_velocity -= energy_loss;
 
     // acceleration
