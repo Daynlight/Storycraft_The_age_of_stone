@@ -26,3 +26,14 @@ pub fn scene_system(
 
   last_scene.0 = active_scene.0;
 }
+
+
+pub struct ScenePlugin;
+impl Plugin for ScenePlugin {
+  fn build(&self, app: &mut App) {
+    app.insert_resource(SceneSystems::default())
+    .insert_resource(ActiveScene::default())
+    .insert_resource(LastScene::default())
+    .add_systems(Update, scene_system);
+  }
+}

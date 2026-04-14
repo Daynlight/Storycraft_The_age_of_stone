@@ -21,7 +21,5 @@ pkgs.mkShell {
       pkgs.vulkan-loader
       pkgs.libxkbcommon
     ]}:$LD_LIBRARY_PATH
-
-    export WGPU_BACKEND=vulkan
   '';
 }
