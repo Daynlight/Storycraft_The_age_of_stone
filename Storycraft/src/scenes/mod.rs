@@ -1,3 +1,4 @@
-pub mod test;
-pub mod test2;
-pub mod scenes;
+pub mod scene;
+pub mod resources;
+pub mod register;
+pub mod system;

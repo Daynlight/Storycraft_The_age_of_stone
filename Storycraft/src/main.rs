@@ -1,9 +1,5 @@
 use bevy::prelude::*;
 
-use crate::components::alt_movement::MovementPlugin;
-use crate::scenes::scenes::{RegisteredScenes, ActiveScene};
-use crate::systems::scenes::ScenePlugin;
-
 mod config;
 mod systems;
 mod prefabs;
@@ -18,30 +14,28 @@ fn main() {
     .add_systems(Startup, setup)
     .add_systems(Update, scene_swap)
     .add_systems(Update, systems::movement::movement_system)
-    .add_plugins(MovementPlugin)
-    .add_plugins(ScenePlugin)
+    .add_plugins(components::alt_movement::MovementPlugin)
+    .add_plugins(scenes::system::ScenePlugin)
+    .add_plugins(scenes::register::RegisteredScenePlugin)
     .run();
 }
 
 
 fn setup(
-  mut commands: Commands,
-  keyboard: Res<ButtonInput<KeyCode>>,
-  mut active_scene: ResMut<ActiveScene>,
+  mut active_scene: ResMut<scenes::resources::ActiveScene>,
 ) {
-  active_scene.0 = RegisteredScenes::Test;
+  active_scene.0 = scenes::register::RegisteredScenes::Test;
 }
 
 
 fn scene_swap(
-  mut commands: Commands,
   keyboard: Res<ButtonInput<KeyCode>>,
-  mut active_scene: ResMut<ActiveScene>,
+  mut active_scene: ResMut<scenes::resources::ActiveScene>,
 ) {
   if keyboard.just_pressed(KeyCode::Digit1){
-    active_scene.0 = RegisteredScenes::Test;
+    active_scene.0 = scenes::register::RegisteredScenes::Test;
   }
   if keyboard.just_pressed(KeyCode::Digit2){
-    active_scene.0 = RegisteredScenes::Test2;
+    active_scene.0 = scenes::register::RegisteredScenes::Test2;
   }
 }

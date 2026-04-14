@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::systems::movement::PlayerInput;
-use crate::scenes::scenes::SceneSystems;
+use crate::scenes::register::SceneSystemsRegister;
 
 
 
@@ -40,7 +40,7 @@ impl Plugin for MovementPlugin {
 const DELTA_TIME: f32 = 1./64.;
 
 fn apply_movement(
-  systems: Res<SceneSystems>,
+  systems: Res<SceneSystemsRegister>,
   mut movers: Query<(&mut Transform, &Velocity)>
 ) {
   if !systems.movement {
@@ -54,7 +54,7 @@ fn apply_movement(
 
 
 fn set_player_velocity(
-  systems: Res<SceneSystems>,
+  systems: Res<SceneSystemsRegister>,
   mut player: Single<(&PlayerInput, &MovementData, &mut Velocity)>
 ) {
   if !systems.movement{

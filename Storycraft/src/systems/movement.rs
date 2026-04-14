@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
+use crate::scenes::register::SceneSystemsRegister;
 use crate::components::movement::Movement;
 use crate::prefabs::camera::MainCamera;
 use crate::prefabs::player::Player;
-use crate::scenes::scenes::SceneSystems;
 use crate::config;
 use crate::components;
 
@@ -63,7 +63,7 @@ pub fn player_movement(
 
 pub fn movement_system(
   keyboard: Res<ButtonInput<KeyCode>>,
-  systems: Res<SceneSystems>,
+  systems: Res<SceneSystemsRegister>,
   time: Res<Time>,
   camera: Single<&mut Transform, (With<MainCamera>, Without<Player>)>,
   player: Single<(&mut Movement, &mut Transform, &mut PlayerInput), With<Player>>,
