@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 
 use crate::components::movement::Movement;
-use crate::config;
-use crate::components;
 use crate::prefabs::camera::MainCamera;
 use crate::prefabs::player::Player;
+use crate::scenes::scenes::SceneSystems;
+use crate::config;
+use crate::components;
 
 
 
@@ -15,10 +16,9 @@ pub struct PlayerInput {
 
 pub fn update_camera_to_follow_player(
   camera: &mut Transform,
-  player: &components::movement::Movement,
+  player: &Transform,
 ) {
-  let position: Vec2 = player.get_current_position();
-  camera.translation = Vec3::new(position.x, position.y, camera.translation.z);
+  camera.translation = player.translation;
 }
 
 
@@ -63,13 +63,18 @@ pub fn player_movement(
 
 pub fn movement_system(
   keyboard: Res<ButtonInput<KeyCode>>,
+  systems: Res<SceneSystems>,
   time: Res<Time>,
   camera: Single<&mut Transform, (With<MainCamera>, Without<Player>)>,
   player: Single<(&mut Movement, &mut Transform, &mut PlayerInput), With<Player>>,
 ) {
+  if !systems.movement{
+    return;
+  }
+
   let mut player_transform = player.into_inner();
   let mut camera_transform = camera.into_inner();
 
   player_movement(keyboard, time, &mut player_transform.2, &mut player_transform.0, &mut player_transform.1 );
-  update_camera_to_follow_player(&mut camera_transform, &player_transform.0);
+  update_camera_to_follow_player(&mut camera_transform, &player_transform.1);
 }

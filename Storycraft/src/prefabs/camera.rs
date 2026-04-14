@@ -1,6 +1,7 @@
 use bevy::prelude::*; 
 
 use crate::config;
+use crate::components::tags::GameEntity;
 
 
 
@@ -13,8 +14,9 @@ impl MainCamera{
     commands: &mut Commands,
   ){
     commands.spawn((
-      Camera2d,
+      Camera2d::default(),
       MainCamera,
+      GameEntity,
       Projection::Orthographic(OrthographicProjection {
         scale: config::settings::CAMERA_ZOOM,
         ..OrthographicProjection::default_2d()
