@@ -20,7 +20,7 @@ fn main() {
     .add_systems(Startup, setup)
     .add_systems(Update, scene_swap)
     .add_systems(Update, systems::scenes::scene_system)
-    .add_systems(PreUpdate, systems::movement::movement_system)
+    .add_systems(Update, systems::movement::movement_system)
     .add_plugins(MovementPlugin)
     .run();
 }
