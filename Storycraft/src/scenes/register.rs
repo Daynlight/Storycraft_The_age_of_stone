@@ -28,4 +28,3 @@ impl Plugin for RegisteredScenePlugin {
     ).chain());
   }
 }
-

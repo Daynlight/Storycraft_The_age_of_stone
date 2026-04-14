@@ -15,14 +15,14 @@ fn main() {
     .add_systems(Update, scene_swap)
     .add_systems(Update, systems::movement::movement_system)
     .add_plugins(components::alt_movement::MovementPlugin)
-    .add_plugins(scenes::system::ScenePlugin)
+    .add_plugins(scenes::system::SceneResourcesPlugin)
     .add_plugins(scenes::register::RegisteredScenePlugin)
     .run();
 }
 
 
 fn setup(
-  mut active_scene: ResMut<scenes::resources::ActiveScene>,
+  mut active_scene: ResMut<scenes::system::ActiveScene>,
 ) {
   active_scene.0 = scenes::register::RegisteredScenes::Test;
 }
@@ -30,7 +30,7 @@ fn setup(
 
 fn scene_swap(
   keyboard: Res<ButtonInput<KeyCode>>,
-  mut active_scene: ResMut<scenes::resources::ActiveScene>,
+  mut active_scene: ResMut<scenes::system::ActiveScene>,
 ) {
   if keyboard.just_pressed(KeyCode::Digit1){
     active_scene.0 = scenes::register::RegisteredScenes::Test;

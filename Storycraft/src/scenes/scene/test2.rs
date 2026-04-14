@@ -11,9 +11,10 @@ pub fn set(
   asset_server: Res<AssetServer>,
   mut systems: ResMut<scenes::register::SceneSystemsRegister>,
   query: Query<Entity, With<tags::GameEntity>>,
-  active_scene: Res<scenes::resources::ActiveScene>,
-  mut last_scene: ResMut<scenes::resources::LastScene>,
+  active_scene: Res<scenes::system::ActiveScene>,
+  mut last_scene: ResMut<scenes::system::LastScene>,
 ) {
+  // validate event
   if **active_scene != scenes::register::RegisteredScenes::Test2 {
     return;
   }
@@ -22,13 +23,13 @@ pub fn set(
   }
   last_scene.0 = active_scene.0; 
 
+  // clear previous scene
   *systems = scenes::register::SceneSystemsRegister::default();
   for entity in &query {
     commands.entity(entity).despawn();
   }
 
-  last_scene.0 = active_scene.0;
-  
+  // set scene
   systems.movement = true;
 
   prefabs::camera::MainCamera::spawn(&mut commands);
