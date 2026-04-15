@@ -7,6 +7,8 @@ use crate::scenes::{scene, system};
 #[derive(Resource, Default)]
 pub struct RunningSystemsRegister{
   pub movement: bool,
+  pub player_events: bool,
+  pub camera_tracking: bool,
 }
 
 

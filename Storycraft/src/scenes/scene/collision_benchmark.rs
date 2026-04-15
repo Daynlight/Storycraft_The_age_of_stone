@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 use rand::RngExt;
 
-use crate::components::tags;
+use crate::tags;
 use crate::config::benchmark;
 use crate::scenes;
 use crate::prefabs;

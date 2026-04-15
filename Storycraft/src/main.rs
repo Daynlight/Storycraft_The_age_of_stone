@@ -1,10 +1,10 @@
 use bevy::prelude::*;
 
 mod config;
-mod systems;
 mod prefabs;
-mod components;
+mod mechanics;
 mod scenes;
+mod tags;
 
 
 
@@ -12,9 +12,8 @@ fn main() {
   App::new()
     .add_plugins(DefaultPlugins)
     .add_systems(Startup, setup)
-    .add_systems(Update, scene_swap)
-    .add_systems(Update, systems::movement::movement_system.run_if(components::movement::movement_system_is_on))
-    .add_plugins(components::alt_movement::MovementPlugin)
+    .add_systems(PreUpdate, scene_swap)
+    .add_plugins(mechanics::systems::MechanicsPlugin)
     .add_plugins(scenes::system::ScenePlugin)
     .run();
 }

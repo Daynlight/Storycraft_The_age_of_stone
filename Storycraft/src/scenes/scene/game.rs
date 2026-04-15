@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::scenes;
-use crate::components::tags;
+use crate::tags;
 use crate::prefabs;
 
 
@@ -20,6 +20,8 @@ pub fn set(
 
   // set scene
   systems.movement = true;
+  systems.player_events = true;
+  systems.camera_tracking = true;
 
   prefabs::camera::MainCamera::spawn(&mut commands);
   prefabs::player::Player::spawn(&mut commands, &asset_server);
