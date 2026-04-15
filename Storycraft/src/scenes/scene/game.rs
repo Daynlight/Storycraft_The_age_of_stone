@@ -9,11 +9,11 @@ use crate::prefabs;
 pub fn set(
   mut commands: Commands,
   asset_server: Res<AssetServer>,
-  mut systems: ResMut<scenes::register::SceneSystemsRegister>,
+  mut systems: ResMut<scenes::register::RunningSystemsRegister>,
   query: Query<Entity, With<tags::GameEntity>>,
 ) {
   // clear previous scene
-  *systems = scenes::register::SceneSystemsRegister::default();
+  *systems = scenes::register::RunningSystemsRegister::default();
   for entity in &query {
     commands.entity(entity).despawn();
   }
@@ -33,6 +33,6 @@ pub fn set(
 }
 
 
-pub fn in_test_scene(active: Res<scenes::system::ActiveScene>) -> bool {
-  **active == scenes::register::RegisteredScenes::Test
+pub fn check(active: Res<scenes::system::ActiveScene>) -> bool {
+  **active == scenes::register::ScenesRegister::Game
 }

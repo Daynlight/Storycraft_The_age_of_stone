@@ -78,6 +78,6 @@ impl Movement{
 }
 
 
-pub fn movement_system_is_on(systems: Res<scenes::register::SceneSystemsRegister>) -> bool {
+pub fn movement_system_is_on(systems: Res<scenes::register::RunningSystemsRegister>) -> bool {
   systems.movement
 }

@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
+use crate::scenes;
 use crate::systems::movement::PlayerInput;
-use crate::scenes::register::SceneSystemsRegister;
 use crate::components::movement;
 
 
@@ -50,7 +50,7 @@ fn apply_movement(
 
 
 fn set_player_velocity(
-  systems: Res<SceneSystemsRegister>,
+  systems: Res<scenes::register::RunningSystemsRegister>,
   mut player: Single<(&PlayerInput, &MovementData, &mut Velocity)>
 ) {
   if !systems.movement{

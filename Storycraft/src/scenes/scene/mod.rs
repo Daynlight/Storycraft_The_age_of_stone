@@ -1,2 +1,2 @@
-pub mod test;
-pub mod test2;
+pub mod game;
+pub mod collision_benchmark;

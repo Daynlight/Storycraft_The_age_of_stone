@@ -15,8 +15,7 @@ fn main() {
     .add_systems(Update, scene_swap)
     .add_systems(Update, systems::movement::movement_system.run_if(components::movement::movement_system_is_on))
     .add_plugins(components::alt_movement::MovementPlugin)
-    .add_plugins(scenes::system::SceneResourcesPlugin)
-    .add_plugins(scenes::register::RegisteredScenePlugin)
+    .add_plugins(scenes::system::ScenePlugin)
     .run();
 }
 
@@ -24,7 +23,7 @@ fn main() {
 fn setup(
   mut active_scene: ResMut<scenes::system::ActiveScene>,
 ) {
-  active_scene.0 = scenes::register::RegisteredScenes::Test;
+  active_scene.0 = scenes::register::ScenesRegister::Game;
 }
 
 
@@ -33,9 +32,9 @@ fn scene_swap(
   mut active_scene: ResMut<scenes::system::ActiveScene>,
 ) {
   if keyboard.just_pressed(KeyCode::Digit1){
-    active_scene.0 = scenes::register::RegisteredScenes::Test;
+    active_scene.0 = scenes::register::ScenesRegister::Game;
   }
   if keyboard.just_pressed(KeyCode::Digit2){
-    active_scene.0 = scenes::register::RegisteredScenes::Test2;
+    active_scene.0 = scenes::register::ScenesRegister::CollisionBenchmark;
   }
 }
