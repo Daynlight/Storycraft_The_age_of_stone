@@ -2,6 +2,7 @@ use bevy::prelude::*;
 
 use crate::systems::movement::PlayerInput;
 use crate::scenes::register::SceneSystemsRegister;
+use crate::components::movement;
 
 
 
@@ -31,7 +32,7 @@ impl Velocity {
 pub struct MovementPlugin;
 impl Plugin for MovementPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(FixedUpdate, (set_player_velocity, apply_movement).chain());
+    app.add_systems(FixedUpdate, (set_player_velocity, apply_movement).chain().run_if(movement::movement_system_is_on));
   }
 }
 
@@ -40,13 +41,8 @@ impl Plugin for MovementPlugin {
 const DELTA_TIME: f32 = 1./64.;
 
 fn apply_movement(
-  systems: Res<SceneSystemsRegister>,
   mut movers: Query<(&mut Transform, &Velocity)>
 ) {
-  if !systems.movement {
-    return;
-  }
-
   for (mut transform, velocity) in movers.iter_mut() {
     velocity.apply_to_transform(&mut transform, DELTA_TIME);
   }

@@ -13,7 +13,7 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_systems(Startup, setup)
     .add_systems(Update, scene_swap)
-    .add_systems(Update, systems::movement::movement_system)
+    .add_systems(Update, systems::movement::movement_system.run_if(components::movement::movement_system_is_on))
     .add_plugins(components::alt_movement::MovementPlugin)
     .add_plugins(scenes::system::SceneResourcesPlugin)
     .add_plugins(scenes::register::RegisteredScenePlugin)

@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 
-use crate::scenes::register::SceneSystemsRegister;
 use crate::components::movement::Movement;
 use crate::prefabs::camera::MainCamera;
 use crate::prefabs::player::Player;
@@ -63,15 +62,10 @@ pub fn player_movement(
 
 pub fn movement_system(
   keyboard: Res<ButtonInput<KeyCode>>,
-  systems: Res<SceneSystemsRegister>,
   time: Res<Time>,
   camera: Single<&mut Transform, (With<MainCamera>, Without<Player>)>,
   player: Single<(&mut Movement, &mut Transform, &mut PlayerInput), With<Player>>,
 ) {
-  if !systems.movement{
-    return;
-  }
-
   let mut player_transform = player.into_inner();
   let mut camera_transform = camera.into_inner();
 

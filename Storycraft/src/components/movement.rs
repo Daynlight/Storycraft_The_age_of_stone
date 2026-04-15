@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::scenes;
+
 
 
 #[derive(Component)]
@@ -73,4 +75,9 @@ impl Movement{
 
     self.update_current_position(delta_time);
   }
+}
+
+
+pub fn movement_system_is_on(systems: Res<scenes::register::SceneSystemsRegister>) -> bool {
+  systems.movement
 }
