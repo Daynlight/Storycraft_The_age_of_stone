@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use rand::RngExt;
 
 use crate::components::tags;
 use crate::scenes;
@@ -8,7 +9,6 @@ use crate::prefabs;
 
 pub fn set(
   mut commands: Commands,
-  asset_server: Res<AssetServer>,
   mut systems: ResMut<scenes::register::RunningSystemsRegister>,
   query: Query<Entity, With<tags::GameEntity>>,
 ) {
@@ -18,22 +18,22 @@ pub fn set(
     commands.entity(entity).despawn();
   }
 
-  // set scene
-  systems.movement = true;
-
   prefabs::camera::MainCamera::spawn(&mut commands);
-  prefabs::player::Player::spawn(&mut commands, &asset_server);
 
   
   // add boxes
-  for _ in 0..100{
+  for _ in 0..1000{
+    let mut rng = rand::rng();
+    let x: f32 = rng.random_range(-300..300) as f32;
+    let y: f32 = rng.random_range(-200..200) as f32;
+
     commands.spawn((
       Sprite{
-        color: Color::linear_rgb(0.2, 0.8, 0.3),
-        custom_size: Some(Vec2::new(32.0, 32.0)),
+        color: Color::linear_rgb(0.0, 0.5, 0.5),
+        custom_size: Some(Vec2::new(10.0, 10.0)),
         ..default()
       }, tags::GameEntity,
-      Transform::from_xyz(0.0, 0.0, 0.0)
+      Transform::from_xyz(x, y, 0.0)
     ));
   }
 }
