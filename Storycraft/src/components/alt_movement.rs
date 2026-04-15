@@ -50,13 +50,8 @@ fn apply_movement(
 
 
 fn set_player_velocity(
-  systems: Res<scenes::register::RunningSystemsRegister>,
   mut player: Single<(&PlayerInput, &MovementData, &mut Velocity)>
 ) {
-  if !systems.movement{
-    return;
-  }
-
   let (player_input, settings, mut velocity) = player.into_inner();
 
   let target = player_input.move_dir * settings.max_velocity;
