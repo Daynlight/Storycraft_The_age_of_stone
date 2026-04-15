@@ -12,6 +12,16 @@ pub struct ActiveScene(pub register::RegisteredScenes);
 pub struct LastScene(pub register::RegisteredScenes);
 
 
+pub fn scene_change(active: Res<ActiveScene>, last: Res<LastScene>) -> bool {
+  **active != **last
+}
+
+
+pub fn update_last_scene_system(active: Res<ActiveScene>, mut last: ResMut<LastScene>){ 
+  last.0 = active.0;
+}
+
+
 pub struct SceneResourcesPlugin;
 impl Plugin for SceneResourcesPlugin {
   fn build(&self, app: &mut App) {
