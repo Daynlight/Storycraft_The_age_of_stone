@@ -13,21 +13,23 @@ pub fn set(
   query: Query<Entity, With<tags::GameEntity>>,
 ) {
   // clear previous scene
-  *systems = scenes::register::RunningSystemsRegister::default();
   for entity in &query {
     commands.entity(entity).despawn();
   }
 
-  // set scene
-  systems.movement = true;
-  systems.player_events = true;
-  systems.camera_tracking = true;
-  systems.player_movement = true;
+  // set systems
+  *systems = scenes::register::RunningSystemsRegister{
+    movement: true,
+    player_events: true,
+    camera_tracking: true,
+    player_movement: true,
+  };
 
-  prefabs::camera::Camera2D::spawn(&mut commands);
+  // compose scene
+  prefabs::game_camera::GameCamera::spawn(&mut commands);
   prefabs::player::Player::spawn(&mut commands, &asset_server);
 
-  // add Counter
+  //// add Counter
   let texture = asset_server.load("Restaurant/Counter/Counter.png");
   commands.spawn((
     Sprite::from_image(texture), tags::GameEntity,

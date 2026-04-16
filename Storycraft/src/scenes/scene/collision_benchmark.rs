@@ -14,17 +14,22 @@ pub fn set(
   query: Query<Entity, With<tags::GameEntity>>,
 ) {
   // clear previous scene
-  *systems = scenes::register::RunningSystemsRegister::default();
   for entity in &query {
     commands.entity(entity).despawn();
   }
 
-  systems.movement = true;
+  // set systems
+  *systems = scenes::register::RunningSystemsRegister{
+    movement: true,
+    player_events: false,
+    camera_tracking: false,
+    player_movement: false,
+  };
 
-  prefabs::camera::Camera2D::spawn(&mut commands);
+  // compose scene 
+  prefabs::game_camera::GameCamera::spawn(&mut commands);
 
-  
-  // add boxes
+  //// add boxes
   for _ in 0..benchmark::COLLISIONBOXBENCHMARKAMMOUNT{
     let mut rng = rand::rng();
     let x: f32 = rng.random_range(-300..300) as f32;

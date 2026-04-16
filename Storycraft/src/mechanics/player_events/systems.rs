@@ -26,7 +26,7 @@ fn set_player_movement_data(
     direction.x = 1.0;
   }
 
-  player_movement_data.movement_direction = direction;
+  player_movement_data.movement_direction = direction.normalize_or_zero();
 }
 
 
@@ -35,8 +35,8 @@ fn player_events_system_is_on(systems: Res<scenes::register::RunningSystemsRegis
 }
 
 
-pub struct PlayerEventsPlugin;
-impl Plugin for PlayerEventsPlugin {
+pub struct PlayerMovementEventsPlugin;
+impl Plugin for PlayerMovementEventsPlugin {
   fn build(&self, app: &mut App) {
     app.add_systems(PreUpdate, set_player_movement_data.run_if(player_events_system_is_on));
   }

@@ -21,6 +21,7 @@ impl Player{
     commands.spawn((
       Sprite::from_image(texture),
       Transform::from_xyz(position.x, position.y, 0.0),
+      Player,
       tags::MainPlayer,
       tags::GameEntity,
       movement::components::EntityVelocityVector::default(),

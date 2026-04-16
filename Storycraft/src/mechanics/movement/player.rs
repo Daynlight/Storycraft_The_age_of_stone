@@ -11,7 +11,8 @@ fn set_player_velocity(
 ) {
   let (mut velocity_vector, entity_movement_data) = player.into_inner();
 
-  let target = entity_movement_data.movement_direction * entity_movement_data.max_velocity;
+  let direction = entity_movement_data.movement_direction.normalize_or_zero();
+  let target = direction * entity_movement_data.max_velocity;
   let distance = target - velocity_vector.0;
 
   if distance.length() < entity_movement_data.acceleration * settings::FIXED_UPDATE_DELTA_TIME {
