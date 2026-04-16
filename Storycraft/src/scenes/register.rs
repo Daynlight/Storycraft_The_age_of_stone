@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::scenes::{scene, system};
+use crate::scenes::{scene, systems};
 
 
 
@@ -29,6 +29,6 @@ impl Plugin for RegisteredScenePlugin {
     app.add_systems(Update, (
       scene::game::set.run_if(scene::game::check),
       scene::collision_benchmark::set.run_if(scene::collision_benchmark::check)
-    ).run_if(system::scene_changed));
+    ).run_if(systems::scene_changed));
   }
 }

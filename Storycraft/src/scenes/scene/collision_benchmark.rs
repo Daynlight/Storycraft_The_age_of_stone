@@ -45,6 +45,6 @@ pub fn set(
 }
 
 
-pub fn check(active: Res<scenes::system::ActiveScene>) -> bool {
+pub fn check(active: Res<scenes::systems::ActiveScene>) -> bool {
   **active == scenes::register::ScenesRegister::CollisionBenchmark
 }
