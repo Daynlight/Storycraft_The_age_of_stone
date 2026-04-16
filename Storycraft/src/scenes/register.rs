@@ -9,6 +9,7 @@ pub struct RunningSystemsRegister{
   pub movement: bool,
   pub player_events: bool,
   pub camera_tracking: bool,
+  pub player_movement: bool,
 }
 
 

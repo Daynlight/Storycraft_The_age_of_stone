@@ -22,6 +22,7 @@ pub fn set(
   systems.movement = true;
   systems.player_events = true;
   systems.camera_tracking = true;
+  systems.player_movement = true;
 
   prefabs::camera::MainCamera::spawn(&mut commands);
   prefabs::player::Player::spawn(&mut commands, &asset_server);
