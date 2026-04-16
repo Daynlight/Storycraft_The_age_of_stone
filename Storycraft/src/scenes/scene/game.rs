@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::scenes;
-use crate::components::tags;
+use crate::tags;
 use crate::prefabs;
 
 
@@ -13,18 +13,23 @@ pub fn set(
   query: Query<Entity, With<tags::GameEntity>>,
 ) {
   // clear previous scene
-  *systems = scenes::register::RunningSystemsRegister::default();
   for entity in &query {
     commands.entity(entity).despawn();
   }
 
-  // set scene
-  systems.movement = true;
+  // set systems
+  *systems = scenes::register::RunningSystemsRegister{
+    movement: true,
+    player_events: true,
+    camera_tracking: true,
+    player_movement: true,
+  };
 
-  prefabs::camera::MainCamera::spawn(&mut commands);
+  // compose scene
+  prefabs::game_camera::GameCamera::spawn(&mut commands);
   prefabs::player::Player::spawn(&mut commands, &asset_server);
 
-  // add Counter
+  //// add Counter
   let texture = asset_server.load("Restaurant/Counter/Counter.png");
   commands.spawn((
     Sprite::from_image(texture), tags::GameEntity,
@@ -33,6 +38,6 @@ pub fn set(
 }
 
 
-pub fn check(active: Res<scenes::system::ActiveScene>) -> bool {
+pub fn check(active: Res<scenes::systems::ActiveScene>) -> bool {
   **active == scenes::register::ScenesRegister::Game
 }

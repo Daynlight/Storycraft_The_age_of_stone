@@ -1,10 +1,11 @@
 use bevy::prelude::*;
 
 mod config;
-mod systems;
-mod prefabs;
-mod components;
+mod tags;
+mod mechanics;
+mod logic;
 mod scenes;
+mod prefabs;
 
 
 
@@ -12,16 +13,16 @@ fn main() {
   App::new()
     .add_plugins(DefaultPlugins)
     .add_systems(Startup, setup)
-    .add_systems(Update, scene_swap)
-    .add_systems(Update, systems::movement::movement_system.run_if(components::movement::movement_system_is_on))
-    .add_plugins(components::alt_movement::MovementPlugin)
-    .add_plugins(scenes::system::ScenePlugin)
+    .add_systems(PreUpdate, scene_swap)
+    .add_plugins(scenes::systems::ScenePlugin)
+    .add_plugins(mechanics::systems::MechanicsPlugin)
+    .add_plugins(logic::systems::LogicPlugin)
     .run();
 }
 
 
 fn setup(
-  mut active_scene: ResMut<scenes::system::ActiveScene>,
+  mut active_scene: ResMut<scenes::systems::ActiveScene>,
 ) {
   active_scene.0 = scenes::register::ScenesRegister::Game;
 }
@@ -29,7 +30,7 @@ fn setup(
 
 fn scene_swap(
   keyboard: Res<ButtonInput<KeyCode>>,
-  mut active_scene: ResMut<scenes::system::ActiveScene>,
+  mut active_scene: ResMut<scenes::systems::ActiveScene>,
 ) {
   if keyboard.just_pressed(KeyCode::Digit1){
     active_scene.0 = scenes::register::ScenesRegister::Game;
