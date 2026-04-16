@@ -24,7 +24,7 @@ impl Player{
       Player,
       tags::GameEntity,
       movement::components::VelocityVector::default(),
-      movement::components::MovementData::new(settings::PLAYER_VELOCITY, settings::PLAYER_ACCELERATION, settings::PLAYER_RESISTANCE),
+      movement::components::MovementData::new(settings::PLAYER_VELOCITY, settings::PLAYER_ACCELERATION),
     ));
   }
 }

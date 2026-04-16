@@ -5,17 +5,15 @@ use bevy::prelude::*;
 #[derive(Component, Default)]
 pub struct MovementData {
   pub max_velocity: f32,
-  pub acceleration: f32,
-  pub resistance: f32
+  pub acceleration: f32
 }
 
 
 impl MovementData {
-  pub fn new(max_velocity: f32, acceleration: f32, resistance: f32) -> Self {
+  pub fn new(max_velocity: f32, acceleration: f32) -> Self {
     MovementData {
       max_velocity,
-      acceleration,
-      resistance
+      acceleration
     }
   }
 }
