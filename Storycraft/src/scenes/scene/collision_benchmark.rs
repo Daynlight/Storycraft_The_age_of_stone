@@ -21,7 +21,7 @@ pub fn set(
 
   systems.movement = true;
 
-  prefabs::camera::MainCamera::spawn(&mut commands);
+  prefabs::camera::Camera2D::spawn(&mut commands);
 
   
   // add boxes

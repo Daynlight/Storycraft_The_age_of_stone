@@ -24,7 +24,7 @@ pub fn set(
   systems.camera_tracking = true;
   systems.player_movement = true;
 
-  prefabs::camera::MainCamera::spawn(&mut commands);
+  prefabs::camera::Camera2D::spawn(&mut commands);
   prefabs::player::Player::spawn(&mut commands, &asset_server);
 
   // add Counter

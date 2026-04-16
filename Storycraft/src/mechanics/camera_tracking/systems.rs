@@ -1,13 +1,13 @@
 use bevy::prelude::*;
 
-use crate::prefabs;
+use crate::tags;
 use crate::scenes;
 
 
 
 fn camera_tracking(
-  mut camera: Single<&mut Transform, (With<prefabs::camera::MainCamera>, Without<prefabs::player::Player>)>,
-  player: Single<&Transform, With<prefabs::player::Player>>,
+  mut camera: Single<&mut Transform, (With<tags::MainCamera>, Without<tags::MainPlayer>)>,
+  player: Single<&Transform, With<tags::MainPlayer>>,
 ) {
   camera.translation = player.translation;
 }

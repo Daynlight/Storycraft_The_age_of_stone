@@ -21,10 +21,10 @@ impl Player{
     commands.spawn((
       Sprite::from_image(texture),
       Transform::from_xyz(position.x, position.y, 0.0),
-      Player,
+      tags::MainPlayer,
       tags::GameEntity,
-      movement::components::VelocityVector::default(),
-      movement::components::MovementData::new(settings::PLAYER_VELOCITY, settings::PLAYER_ACCELERATION),
+      movement::components::EntityVelocityVector::default(),
+      movement::components::EntityMovementData::new(settings::PLAYER_VELOCITY, settings::PLAYER_ACCELERATION),
     ));
   }
 }

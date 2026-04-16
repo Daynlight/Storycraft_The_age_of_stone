@@ -7,16 +7,17 @@ use crate::prefabs::camera;
 
 
 #[derive(Component)]
-pub struct MainCamera;
+pub struct Camera2D;
 
 
-impl MainCamera{
+impl Camera2D{
   pub fn spawn(
     commands: &mut Commands,
   ){
     commands.spawn((
       Camera2d::default(),
-      camera::MainCamera,
+      camera::Camera2D,
+      tags::MainCamera,
       tags::GameEntity,
       Projection::Orthographic(OrthographicProjection {
         scale: config::settings::CAMERA_ZOOM,

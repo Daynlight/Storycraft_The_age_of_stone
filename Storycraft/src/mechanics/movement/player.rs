@@ -7,18 +7,17 @@ use crate::scenes;
 
 
 fn set_player_velocity(
-  player_movement_data: Res<mechanics::player_events::components::PlayerMovementData>,
-  player: Single<(&mut mechanics::movement::components::VelocityVector, &mechanics::movement::components::MovementData)>
+  player: Single<(&mut mechanics::movement::components::EntityVelocityVector, &mechanics::movement::components::EntityMovementData)>
 ) {
-  let (mut velocity_vector, movement_data) = player.into_inner();
+  let (mut velocity_vector, entity_movement_data) = player.into_inner();
 
-  let target = player_movement_data.movement_direction * movement_data.max_velocity;
+  let target = entity_movement_data.movement_direction * entity_movement_data.max_velocity;
   let distance = target - velocity_vector.0;
 
-  if distance.length() < movement_data.acceleration * settings::FIXED_UPDATE_DELTA_TIME {
+  if distance.length() < entity_movement_data.acceleration * settings::FIXED_UPDATE_DELTA_TIME {
     velocity_vector.0 = target;
   } else {
-    let delta = distance.normalize_or_zero() * movement_data.acceleration * settings::FIXED_UPDATE_DELTA_TIME;
+    let delta = distance.normalize_or_zero() * entity_movement_data.acceleration * settings::FIXED_UPDATE_DELTA_TIME;
     velocity_vector.0 += delta;
   }
 }

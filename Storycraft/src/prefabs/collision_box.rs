@@ -21,7 +21,7 @@ impl CollisionBox{
         custom_size: Some(Vec2::new(10.0, 10.0)),
         ..default()
       }, tags::GameEntity,
-      movement::components::VelocityVector(direction),
+      movement::components::EntityVelocityVector(direction),
       Transform::from_xyz(position.x, position.y, 0.0)
     ));
   }

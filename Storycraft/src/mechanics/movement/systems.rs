@@ -8,7 +8,7 @@ use crate::mechanics::movement;
 
 
 fn apply_movement(
-  mut movers: Query<(&mut Transform, &movement::components::VelocityVector)>
+  mut movers: Query<(&mut Transform, &movement::components::EntityVelocityVector)>
 ) {
   for (mut transform, velocity) in movers.iter_mut() {
     velocity.apply_to_transform(&mut transform, settings::FIXED_UPDATE_DELTA_TIME);
