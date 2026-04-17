@@ -23,6 +23,8 @@ pub fn set(
     player_events: true,
     camera_tracking: true,
     player_movement: true,
+    collision_box_movement: false,
+    generate_collision: false,
   };
 
   // compose scene

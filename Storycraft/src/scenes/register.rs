@@ -10,6 +10,8 @@ pub struct RunningSystemsRegister{
   pub player_events: bool,
   pub camera_tracking: bool,
   pub player_movement: bool,
+  pub collision_box_movement: bool,
+  pub generate_collision: bool,
 }
 
 
@@ -20,7 +22,6 @@ pub enum ScenesRegister{
   Game,
   CollisionBenchmark,
 }
-
 
 
 pub struct RegisteredScenePlugin;
