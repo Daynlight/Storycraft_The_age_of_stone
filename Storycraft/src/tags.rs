@@ -6,6 +6,10 @@ pub struct GameEntity;
 
 
 #[derive(Component)]
+pub struct CollisionBox;
+
+
+#[derive(Component)]
 pub struct MainPlayer;
 
 

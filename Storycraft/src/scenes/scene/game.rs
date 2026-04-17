@@ -20,9 +20,9 @@ pub fn set(
   // set systems
   *systems = scenes::register::RunningSystemsRegister{
     movement: true,
-    player_events: true,
     camera_tracking: true,
     player_movement: true,
+    collisions: true,
   };
 
   // compose scene
@@ -30,14 +30,10 @@ pub fn set(
   prefabs::player::Player::spawn(&mut commands, &asset_server);
 
   //// add Counter
-  let texture = asset_server.load("Restaurant/Counter/Counter.png");
-  commands.spawn((
-    Sprite::from_image(texture), tags::GameEntity,
-    Transform::from_xyz(0.0, 0.0, 0.0)
-  ));
+  prefabs::counter::Counter::spawn(&mut commands, &asset_server, Vec2::new(0.0, 0.0), Vec2::new(32.0, 32.0));
 }
 
 
-pub fn check(active: Res<scenes::systems::ActiveScene>) -> bool {
+pub fn check(active: Res<scenes::plugins::ActiveScene>) -> bool {
   **active == scenes::register::ScenesRegister::Game
 }

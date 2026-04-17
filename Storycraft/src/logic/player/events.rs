@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::mechanics::movement::components;
+use crate::mechanics::movement;
 use crate::config;
 use crate::scenes;
 use crate::tags;
@@ -9,7 +9,7 @@ use crate::tags;
 
 fn set_player_movement_data(
   keyboard: Res<ButtonInput<KeyCode>>,
-  mut player_movement_data: Single<&mut components::EntityMovementData, With<tags::MainPlayer>>,
+  mut player_movement_data: Single<&mut movement::EntityMovementData, With<tags::MainPlayer>>,
 ) {
   let mut direction = Vec2::ZERO;
 
@@ -30,14 +30,12 @@ fn set_player_movement_data(
 }
 
 
-fn player_events_system_is_on(systems: Res<scenes::register::RunningSystemsRegister>) -> bool {
-  systems.player_events
-}
-
 
 pub struct PlayerMovementEventsPlugin;
 impl Plugin for PlayerMovementEventsPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(PreUpdate, set_player_movement_data.run_if(player_events_system_is_on));
+    app.add_systems(PreUpdate, set_player_movement_data
+      .run_if(|systems: Res<scenes::register::RunningSystemsRegister>| { systems.player_movement })
+    );
   }
 }
