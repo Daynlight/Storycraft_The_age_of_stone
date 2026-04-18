@@ -26,8 +26,8 @@ impl CollisionBox{
       CollisionBox,
       tags::GameEntity,
       tags::CollisionBox,
-      movement::components::EntityVelocityVector(direction),
-      collisions::components::CollisionBox::new(Vec2::ZERO, size),
+      movement::EntityVelocityVector(direction),
+      collisions::CollisionBox::new(Vec2::ZERO, size),
       Transform::from_xyz(position.x, position.y, 0.0)
     ));
   }

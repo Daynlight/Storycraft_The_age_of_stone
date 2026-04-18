@@ -6,26 +6,24 @@ use crate::mechanics::collisions;
 
 
 #[derive(Component)]
-pub struct StaticCollisionBox;
+pub struct Counter;
 
-
-impl StaticCollisionBox{
+impl Counter{
   pub fn spawn(
     commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
     position: Vec2,
     size: Vec2,
   ){
+    let texture = asset_server.load("Restaurant/Counter/Counter.png");
     commands.spawn((
-      Sprite{
-        color: Color::linear_rgb(0.0, 0.5, 0.5),
-        custom_size: Some(size),
-        ..default()
-      },
-      StaticCollisionBox,
+      Sprite::from_image(texture), 
       tags::GameEntity,
-      tags::CollisionBox,
       collisions::CollisionBox::new(Vec2::ZERO, size),
-      Transform::from_xyz(position.x, position.y, 0.0)
+      Transform{
+        translation: Vec3::new(position.x, position.y, 0.0),
+        ..default()
+      }
     ));
   }
 }

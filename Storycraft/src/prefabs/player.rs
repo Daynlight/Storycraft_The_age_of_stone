@@ -1,8 +1,8 @@
 use bevy::prelude::*;
 
+use crate::mechanics;
 use crate::tags;
 use crate::config::settings;
-use crate::mechanics::movement;
 
 
 
@@ -24,8 +24,9 @@ impl Player{
       Player,
       tags::MainPlayer,
       tags::GameEntity,
-      movement::components::EntityVelocityVector::default(),
-      movement::components::EntityMovementData::new(settings::PLAYER_VELOCITY, settings::PLAYER_ACCELERATION),
+      mechanics:: collisions::CollisionBox::new(Vec2::ZERO, Vec2::new(32.0, 32.0)),
+      mechanics::movement::EntityVelocityVector::default(),
+      mechanics::movement::EntityMovementData::new(settings::PLAYER_VELOCITY, settings::PLAYER_ACCELERATION),
     ));
   }
 }

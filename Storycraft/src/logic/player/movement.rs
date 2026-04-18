@@ -1,15 +1,43 @@
 use bevy::prelude::*;
 
 use crate::config::settings;
-use crate::mechanics;
+use crate::mechanics::{collisions, movement};
+use crate::tags;
 use crate::scenes;
 
 
 
+fn update_velocity(
+  position: &mut Vec2,
+  box1: collisions::CollisionBox,
+  position2: Vec2,
+  box2: collisions::CollisionBox,
+  velocity_vector: &mut movement::EntityVelocityVector,
+){
+  let combined = box1.size + box2.size;
+  let delta = *position - position2;
+  let depth = combined - delta.abs();
+
+  let normal = if depth.x < depth.y { Vec2::new(delta.x.signum(), 0.0) } else { Vec2::new(0.0, delta.y.signum()) };
+
+  velocity_vector.0 = (velocity_vector.0 - 2.0 * velocity_vector.0.dot(normal) * normal) * 1.01 * settings::PLAYER_COLLISION_ENERGY_LOSS;
+  
+  *position += normal * depth.min_element();
+  info!("HIT");
+}
+
+
 fn set_player_velocity(
-  player: Single<(&mut mechanics::movement::components::EntityVelocityVector, &mechanics::movement::components::EntityMovementData)>
+  player: Single<(Entity, &mut movement::EntityVelocityVector, &mut Transform, &movement::EntityMovementData, &collisions::CollisionBox), With<tags::MainPlayer>>,
+  collision_boxes2: Res<collisions::CollisionBoxesRegister>,
 ) {
-  let (mut velocity_vector, entity_movement_data) = player.into_inner();
+  let (entity, mut velocity_vector, transform, entity_movement_data, collision_box) = player.into_inner();
+
+  let collision_list = collision_box.search_for_collisions(entity, transform.translation.truncate(), &collision_boxes2);
+
+  for (position2, collision_box2) in collision_list.iter(){
+    update_velocity(&mut transform.translation.truncate(), *collision_box, *position2, *collision_box2, &mut velocity_vector);
+  }
 
   let direction = entity_movement_data.movement_direction.normalize_or_zero();
   let target = direction * entity_movement_data.max_velocity;
@@ -24,14 +52,12 @@ fn set_player_velocity(
 }
 
 
-fn player_movement_system_is_on(systems: Res<scenes::register::RunningSystemsRegister>) -> bool {
-  systems.player_movement
-}
-
 
 pub struct SetPlayerMovementPlugin;
 impl Plugin for SetPlayerMovementPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(PreUpdate, set_player_velocity.run_if(player_movement_system_is_on));
+    app.add_systems(PreUpdate, set_player_velocity
+      .run_if(|systems: Res<scenes::register::RunningSystemsRegister>| { systems.player_movement })
+    );
   }
 }

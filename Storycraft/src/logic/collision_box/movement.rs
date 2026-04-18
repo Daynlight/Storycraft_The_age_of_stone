@@ -1,32 +1,22 @@
 use bevy::prelude::*;
-use std::time::Instant;
 
 use crate::config::benchmark;
 use crate::tags;
-use crate::mechanics;
 use crate::scenes;
+use crate::mechanics::{collisions, movement};
 
 
 
 fn update_velocity(
   transform: &mut Transform,
-  transform2: &Transform,
-  box2: &mechanics::collisions::components::CollisionBox,
-  velocity_vector: &mut mechanics::movement::components::EntityVelocityVector,
+  transform2: Vec2,
+  box2: &collisions::CollisionBox,
+  velocity_vector: &mut movement::EntityVelocityVector,
 ){
-  let dx = transform.translation.x - transform2.translation.x;
-  let px = box2.size.x - dx.abs();
+  let delta = transform.translation.truncate() - transform2;
+  let depth = box2.size - delta.abs();
 
-  let dy = transform.translation.y - transform2.translation.y;
-  let py = box2.size.y - dy.abs();
-
-  let normal: Vec2;
-
-  if px < py {
-    normal = Vec2::new(dx.signum(), 0.0);
-  } else {
-    normal = Vec2::new(0.0, dy.signum());
-  }
+  let normal = if depth.x < depth.y { Vec2::new(delta.x.signum(), 0.0) } else { Vec2::new(0.0, delta.y.signum()) };
 
   velocity_vector.0 = (velocity_vector.0 - 2.0 * velocity_vector.0.dot(normal) * normal) * benchmark::ENERGY_LOSS;
   transform.translation += Vec3::new(normal.x, normal.y, 0.0);
@@ -34,33 +24,26 @@ fn update_velocity(
 
 
 fn set_collision_box_velocity(
-  mut collision_boxes: Query<(Entity, &mut Sprite, &mut Transform, &mut mechanics::movement::components::EntityVelocityVector, &mechanics::collisions::components::CollisionBox), With<tags::CollisionBox>>,
-  collision_boxes2: Res<mechanics::collisions::systems::CollisionBoxesRegister>,
+  mut collision_boxes: Query<(Entity, &mut Sprite, &mut Transform, &mut movement::EntityVelocityVector, &collisions::CollisionBox), With<tags::CollisionBox>>,
+  collision_boxes2: Res<collisions::CollisionBoxesRegister>,
 ) {
-  let begging = Instant::now();
-
   for (entity, mut sprite, mut transform, mut velocity_vector, collision_box) in collision_boxes.iter_mut(){
-    let collision_list = collision_box.search_for_collisions(&collision_boxes2, entity, &*transform);
-
-    for (_, transform2, collision_box2) in collision_list.iter(){
-      update_velocity(&mut transform, transform2, collision_box2, &mut velocity_vector);
+    let collision_list = collision_box.search_for_collisions(entity, transform.translation.truncate(), &collision_boxes2);
+    
+    for (transform2, collision_box2) in collision_list.iter(){
+      update_velocity(&mut transform, *transform2, collision_box2, &mut velocity_vector);
       sprite.color = Color::linear_rgb(1.0, 0.0, 0.0);
     }
   }
-
-  let duration = begging.elapsed();
-  info!("Collision Calculations: {:?}", duration);
 }
 
-
-fn collision_box_movement_system_is_on(systems: Res<scenes::register::RunningSystemsRegister>) -> bool {
-  systems.collision_box_movement
-}
 
 
 pub struct SetCollisionBoxMovementPlugin;
 impl Plugin for SetCollisionBoxMovementPlugin {
   fn build(&self, app: &mut App) {
-    app.add_systems(FixedPreUpdate, set_collision_box_velocity.run_if(collision_box_movement_system_is_on));
+    app.add_systems(FixedPreUpdate, set_collision_box_velocity.
+      run_if(|systems: Res<scenes::register::RunningSystemsRegister>| { systems.collisions })
+    );
   }
 }

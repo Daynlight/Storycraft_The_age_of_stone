@@ -1,3 +1,3 @@
 pub mod scene;
 pub mod register;
-pub mod systems;
+pub mod plugins;

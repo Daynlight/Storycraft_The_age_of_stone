@@ -1,17 +1,15 @@
 use bevy::prelude::*;
 
-use crate::scenes::{scene, systems};
+use crate::scenes::{scene, plugins};
 
 
 
 #[derive(Resource, Default)]
 pub struct RunningSystemsRegister{
   pub movement: bool,
-  pub player_events: bool,
   pub camera_tracking: bool,
   pub player_movement: bool,
-  pub collision_box_movement: bool,
-  pub generate_collision: bool,
+  pub collisions: bool,
 }
 
 
@@ -30,6 +28,6 @@ impl Plugin for RegisteredScenePlugin {
     app.add_systems(Update, (
       scene::game::set.run_if(scene::game::check),
       scene::collision_benchmark::set.run_if(scene::collision_benchmark::check)
-    ).run_if(systems::scene_changed));
+    ).run_if(plugins::scene_changed));
   }
 }

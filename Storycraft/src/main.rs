@@ -14,15 +14,15 @@ fn main() {
     .add_plugins(DefaultPlugins)
     .add_systems(Startup, setup)
     .add_systems(PreUpdate, scene_swap)
-    .add_plugins(scenes::systems::ScenePlugin)
-    .add_plugins(mechanics::systems::MechanicsPlugin)
-    .add_plugins(logic::systems::LogicPlugin)
+    .add_plugins(scenes::plugins::ScenePlugin)
+    .add_plugins(mechanics::plugins::MechanicsPlugin)
+    .add_plugins(logic::plugins::LogicPlugin)
     .run();
 }
 
 
 fn setup(
-  mut active_scene: ResMut<scenes::systems::ActiveScene>,
+  mut active_scene: ResMut<scenes::plugins::ActiveScene>,
 ) {
   active_scene.0 = scenes::register::ScenesRegister::Game;
 }
@@ -30,7 +30,7 @@ fn setup(
 
 fn scene_swap(
   keyboard: Res<ButtonInput<KeyCode>>,
-  mut active_scene: ResMut<scenes::systems::ActiveScene>,
+  mut active_scene: ResMut<scenes::plugins::ActiveScene>,
 ) {
   if keyboard.just_pressed(KeyCode::Digit1){
     active_scene.0 = scenes::register::ScenesRegister::Game;
