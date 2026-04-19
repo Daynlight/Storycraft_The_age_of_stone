@@ -2,7 +2,6 @@ use bevy::math::Vec2;
 
 
 
-
 pub const COLLISION_BOX_BENCHMARK_AMOUNT: u32 = 1000;
 pub const COLLISION_BOX_STATIC_BENCHMARK_AMOUNT: u32 = 500;
 
