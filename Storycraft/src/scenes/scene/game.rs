@@ -3,13 +3,11 @@ use bevy::prelude::*;
 use crate::scenes;
 use crate::tags;
 use crate::prefabs;
-use crate::mechanics;
 
 
 
 pub fn set(
   mut commands: Commands,
-  mut collisions_register: ResMut<mechanics::collisions::CollisionBoxesRegister>,
   asset_server: Res<AssetServer>,
   mut systems: ResMut<scenes::register::RunningSystemsRegister>,
   query: Query<Entity, With<tags::GameEntity>>,
@@ -18,7 +16,6 @@ pub fn set(
   for entity in &query {
     commands.entity(entity).despawn();
   }
-  mechanics::collisions::clean_collision_register(&mut collisions_register);
 
   // set systems
   *systems = scenes::register::RunningSystemsRegister{

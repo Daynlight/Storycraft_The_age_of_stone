@@ -84,16 +84,6 @@ pub struct CollisionBoxesRegister{
 }
 
 
-pub fn clean_collision_register(
-  collisions_register: &mut CollisionBoxesRegister,
-){
-  collisions_register.colliders_buckets.clear();
-  collisions_register.colliders_vector.clear();
-  collisions_register.entity_buckets.clear();
-  collisions_register.entity_index.clear();
-}
-
-
 fn get_buckets(
   collision_box: &CollisionBox,
   position: &Vec2,
@@ -199,12 +189,33 @@ fn generate_collision_data(
 }
 
 
+fn removed_collision_data(
+  mut removed: RemovedComponents<Transform>,
+  mut collisions_register: ResMut<CollisionBoxesRegister>,
+) {
+  for entity in &mut removed.read() {
+    remove_element_in_collision_register(&mut collisions_register, entity);
+  }
+}
+
+
+fn added_collision_data(
+  mut collisions_register: ResMut<CollisionBoxesRegister>,
+  added: Query<(Entity, &Transform, &CollisionBox), Added<CollisionBox>>
+) {
+  for (entity, transform, collision_box) in added {
+    let new_buckets = get_buckets(collision_box, &transform.translation.truncate());
+    add_element_to_collision_register(&mut collisions_register, entity, transform, collision_box, new_buckets);
+  }
+}
+
+
 
 pub struct CollisionPlugin;
 impl Plugin for CollisionPlugin {
   fn build(&self, app: &mut App) {
     app.insert_resource(CollisionBoxesRegister::default())
-      .add_systems(FixedPreUpdate, generate_collision_data
+      .add_systems(FixedPreUpdate, (generate_collision_data, removed_collision_data, added_collision_data)
         .run_if(|systems: Res<scenes::register::RunningSystemsRegister>| { systems.collisions })
       );
   }

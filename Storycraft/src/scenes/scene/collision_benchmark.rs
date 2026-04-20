@@ -5,13 +5,11 @@ use crate::tags;
 use crate::config::benchmark;
 use crate::scenes;
 use crate::prefabs;
-use crate::mechanics::collisions;
 
 
 
 pub fn set(
   mut commands: Commands,
-  mut collisions_register: ResMut<collisions::CollisionBoxesRegister>,
   mut systems: ResMut<scenes::register::RunningSystemsRegister>,
   query: Query<Entity, With<tags::GameEntity>>,
 ) {
@@ -19,7 +17,6 @@ pub fn set(
   for entity in &query {
     commands.entity(entity).despawn();
   }
-  collisions::clean_collision_register(&mut collisions_register);
   
 
   // set systems
