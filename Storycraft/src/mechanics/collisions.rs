@@ -75,7 +75,6 @@ impl CollisionBox{
 
 
 
-
 #[derive(Resource, Default)]
 pub struct CollisionBoxesRegister{
   pub colliders_vector: Vec<(Entity, Vec2, CollisionBox)>,
@@ -122,14 +121,10 @@ fn get_buckets(
 }
 
 
-fn add_update_element_in_collision_register(
-    collisions_register: &mut CollisionBoxesRegister,
-    entity: Entity,
-    transform: &Transform,
-    collision_box: &CollisionBox,
-) {
-  let new_buckets = get_buckets(collision_box, &transform.translation.truncate());
-
+fn remove_element_in_collision_register(
+  collisions_register: &mut CollisionBoxesRegister,
+  entity: Entity,
+){
   if let Some(old_buckets) = collisions_register.entity_buckets.get(&entity) {
     if let Some(&index) = collisions_register.entity_index.get(&entity) {
       for bucket in old_buckets {
@@ -139,7 +134,16 @@ fn add_update_element_in_collision_register(
       }
     }
   }
+}
 
+
+fn add_element_to_collision_register(
+  collisions_register: &mut CollisionBoxesRegister,
+  entity: Entity,
+  transform: &Transform,
+  collision_box: &CollisionBox,
+  new_buckets: Vec<IVec2>,
+){
   if let Some(&index) = collisions_register.entity_index.get(&entity) {
     collisions_register.colliders_vector[index] = (entity, transform.translation.truncate(), *collision_box);
 
@@ -172,12 +176,25 @@ fn add_update_element_in_collision_register(
 }
 
 
+fn update_element_in_collision_register(
+  mut collisions_register: &mut CollisionBoxesRegister,
+  entity: Entity,
+  transform: &Transform,
+  collision_box: &CollisionBox,
+) {
+  let new_buckets = get_buckets(collision_box, &transform.translation.truncate());
+
+  remove_element_in_collision_register(&mut collisions_register, entity);
+  add_element_to_collision_register(collisions_register, entity, transform, collision_box, new_buckets);
+}
+
+
 fn generate_collision_data(
   mut collisions_register: ResMut<CollisionBoxesRegister>,
   collisions: Query<(Entity, &Transform, &CollisionBox), Changed<Transform>>
 ) {
   for (entity, transform, collision_box) in collisions.iter() {
-    add_update_element_in_collision_register(&mut collisions_register, entity, transform, collision_box);
+    update_element_in_collision_register(&mut collisions_register, entity, transform, collision_box);
   }
 }
 
