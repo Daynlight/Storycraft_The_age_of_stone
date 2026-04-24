@@ -112,14 +112,13 @@ impl CollisionBoxesRegister{
     new_buckets: &Vec<IVec2>,
   ) -> bool {
     if let Some(old_buckets) = self.entity_buckets.get(&entity) {
+      // [TODO] Check Rect
       if old_buckets.len() != new_buckets.len() {
         return true;
       }
 
-      for bucket in old_buckets {
-        if !new_buckets.contains(bucket) {
-          return true;
-        }
+      if !new_buckets[0] != old_buckets[0] {
+        return true;
       }
     }
     else{
