@@ -40,7 +40,7 @@ impl CollisionBox{
     let mut checked: HashSet<Entity> = HashSet::new();
     checked.reserve(settings::BUFFER_SIZE);
 
-    let buckets: Vec<IVec2> = get_buckets(&self, &position);
+    let buckets: Vec<IVec2> = get_buckets(&self, &position).1;
 
     for bucket in buckets {
       if let Some(indices) = collision_register.colliders_buckets.get(&bucket) {
@@ -71,7 +71,7 @@ impl CollisionBox{
 fn get_buckets(
   collision_box: &CollisionBox,
   position: &Vec2,
-) -> Vec<IVec2> {
+) -> (IVec2, Vec<IVec2>) {
   let mut buckets: Vec<IVec2> = Vec::new();
   buckets.reserve(settings::BUFFER_SIZE);
 
@@ -91,7 +91,7 @@ fn get_buckets(
   }
 
   buckets.shrink_to_fit();
-  return buckets;
+  return (IVec2::new(min_cell.x - max_cell.x, min_cell.x - max_cell.x), buckets);
 }
 
 
@@ -100,7 +100,7 @@ fn get_buckets(
 pub struct CollisionBoxesRegister{
   pub colliders_vector: Vec<(Entity, Vec2, CollisionBox)>,
   pub colliders_buckets: HashMap<IVec2, Vec<usize>>,
-  pub entity_buckets: HashMap<Entity, Vec<IVec2>>,
+  pub entity_buckets: HashMap<Entity, (IVec2, Vec<IVec2>)>,
   pub entity_vector_index: HashMap<Entity, usize>,
 }
 
@@ -109,15 +109,18 @@ impl CollisionBoxesRegister{
   fn buckets_are_different(
     &self,
     entity: Entity,
-    new_buckets: &Vec<IVec2>,
+    new_buckets: &(IVec2, Vec<IVec2>),
   ) -> bool {
     if let Some(old_buckets) = self.entity_buckets.get(&entity) {
-      // [TODO] Check Rect
-      if old_buckets.len() != new_buckets.len() {
+      if old_buckets.1.len() != new_buckets.1.len() {
         return true;
       }
 
-      if !new_buckets[0] != old_buckets[0] {
+      if old_buckets.0.x != new_buckets.0.x || old_buckets.0.y != new_buckets.0.y {
+        return true;
+      }
+
+      if !new_buckets.1[0] != old_buckets.1[0] {
         return true;
       }
     }
@@ -134,10 +137,10 @@ impl CollisionBoxesRegister{
     entity: Entity,
     position: &Vec2,
     collision_box: &CollisionBox,
-    new_buckets: &Vec<IVec2>,
+    new_buckets: &(IVec2, Vec<IVec2>),
   ){
     if let Some(&index) = self.entity_vector_index.get(&entity) {
-      for bucket in new_buckets {
+      for bucket in &new_buckets.1 {
         self.colliders_buckets.entry(*bucket)
           .or_insert_with(|| { 
             let mut  v = Vec::new(); 
@@ -150,7 +153,7 @@ impl CollisionBoxesRegister{
 
       self.colliders_vector.push((entity, *position, *collision_box));
 
-      for bucket in new_buckets {
+      for bucket in &new_buckets.1 {
         self.colliders_buckets.entry(*bucket).or_insert_with(
           || { 
             let mut  v = Vec::new(); 
@@ -172,12 +175,12 @@ impl CollisionBoxesRegister{
   ){
     if let Some(old_buckets) = self.entity_buckets.get(&entity) {
       if let Some(&index) = self.entity_vector_index.get(&entity) {
-        for bucket in old_buckets {
-          if let Some(bucket_data) = self.colliders_buckets.get_mut(bucket) {
+        for bucket in &old_buckets.1 {
+          if let Some(bucket_data) = self.colliders_buckets.get_mut(&bucket) {
             bucket_data.retain(|&i| i != index);
             
             if bucket_data.len() <= 0 {
-              self.colliders_buckets.remove(bucket);
+              self.colliders_buckets.remove(&bucket);
             }
           }
         }
