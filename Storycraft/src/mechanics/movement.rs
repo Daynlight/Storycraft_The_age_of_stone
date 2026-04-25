@@ -1,9 +1,14 @@
 use bevy::prelude::*;
 
 use crate::scenes;
-use crate::config::settings;
+use crate::utils::utils;
+use crate::config;
 use crate::mechanics::movement;
 
+
+
+#[derive(Component, Default, Deref, DerefMut)]
+pub struct WorldPos(pub Vec3);
 
 
 #[derive(Component, Default)]
@@ -29,18 +34,21 @@ impl EntityMovementData {
 pub struct EntityVelocityVector(pub Vec2);
 
 impl EntityVelocityVector {
-  pub fn apply_to_transform(&self, transform: &mut Transform, delta_time: f32) {
-    transform.translation.x += self.x * delta_time;
-    transform.translation.y += self.y * delta_time;
+  pub fn apply_to_transform(&self, world_pos: &mut WorldPos, transform: &mut Transform, delta_time: f32) {
+    world_pos.x += self.x * delta_time;
+    world_pos.y += self.y * delta_time;
+    
+    let position = utils::world_to_view(world_pos.0);
+    transform.translation = position;
   }
 }
 
 
 fn apply_movement(
-  mut movers: Query<(&mut Transform, &movement::EntityVelocityVector)>
+  mut movers: Query<(&mut WorldPos, &mut Transform, &movement::EntityVelocityVector)>
 ) {
-  for (mut transform, velocity) in movers.iter_mut() {
-    velocity.apply_to_transform(&mut transform, settings::FIXED_UPDATE_DELTA_TIME);
+  for (mut world_pos, mut transform, velocity) in movers.iter_mut() {
+    velocity.apply_to_transform(&mut world_pos, &mut transform, config::FIXED_UPDATE_DELTA_TIME);
   }
 }
 

@@ -1,7 +1,6 @@
 use bevy::prelude::*; 
 
-use crate::config;
-use crate::tags;
+use crate::utils::tags;
 
 
 
@@ -12,6 +11,7 @@ pub struct GameCamera;
 impl GameCamera{
   pub fn spawn(
     commands: &mut Commands,
+    zoom: f32,
   ){
     commands.spawn((
       Camera2d::default(),
@@ -19,7 +19,7 @@ impl GameCamera{
       tags::MainCamera,
       tags::GameEntity,
       Projection::Orthographic(OrthographicProjection {
-        scale: config::settings::CAMERA_ZOOM,
+        scale: zoom,
         ..OrthographicProjection::default_2d()
       })
     ));

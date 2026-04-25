@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use std::collections::{HashMap, HashSet};
 
 use crate::scenes;
-use crate::config::settings;
+use crate::config;
 
 
 
@@ -35,10 +35,10 @@ impl CollisionBox{
     collision_register: &CollisionBoxesRegister,
   ) -> Vec<(Vec2, CollisionBox)> {
     let mut collisions: Vec<(Vec2, CollisionBox)> = Vec::new();
-    collisions.reserve(settings::BUFFER_SIZE);
+    collisions.reserve(config::BUFFER_SIZE);
 
     let mut checked: HashSet<Entity> = HashSet::new();
-    checked.reserve(settings::BUFFER_SIZE);
+    checked.reserve(config::BUFFER_SIZE);
 
     let buckets: Vec<IVec2> = get_buckets(&self, &position).1;
 
@@ -73,7 +73,7 @@ fn get_buckets(
   position: &Vec2,
 ) -> (IVec2, Vec<IVec2>) {
   let mut buckets: Vec<IVec2> = Vec::new();
-  buckets.reserve(settings::BUFFER_SIZE);
+  buckets.reserve(config::BUFFER_SIZE);
 
   let center: Vec2 = position + collision_box.offset;
   let half: Vec2 = collision_box.size / 2.0;
@@ -81,8 +81,8 @@ fn get_buckets(
   let min: Vec2 = center - half;
   let max: Vec2 = center + half;
 
-  let min_cell: IVec2 = (min / settings::BUCKETS_SIZE).floor().as_ivec2();
-  let max_cell: IVec2 = (max / settings::BUCKETS_SIZE).floor().as_ivec2();
+  let min_cell: IVec2 = (min / config::BUCKETS_SIZE).floor().as_ivec2();
+  let max_cell: IVec2 = (max / config::BUCKETS_SIZE).floor().as_ivec2();
 
   for x in min_cell.x..=max_cell.x {
     for y in min_cell.y..=max_cell.y {
@@ -144,7 +144,7 @@ impl CollisionBoxesRegister{
         self.colliders_buckets.entry(*bucket)
           .or_insert_with(|| { 
             let mut  v = Vec::new(); 
-            v.reserve(settings::BUCKET_BUFFER_SIZE);
+            v.reserve(config::BUCKET_BUFFER_SIZE);
             v
           }).push(index);
       }
@@ -157,7 +157,7 @@ impl CollisionBoxesRegister{
         self.colliders_buckets.entry(*bucket).or_insert_with(
           || { 
             let mut  v = Vec::new(); 
-            v.reserve(settings::BUCKET_BUFFER_SIZE);
+            v.reserve(config::BUCKET_BUFFER_SIZE);
             v
           }).push(index);
       }
@@ -212,29 +212,29 @@ impl CollisionBoxesRegister{
   ){
     self.remove_entity_from_buckets(entity);
 
-    if self.colliders_vector.len() <= 1{
-      self.entity_vector_index.remove(&entity);
-      self.entity_buckets.remove(&entity);
-      self.colliders_vector.pop();
-      return;
-    }
+    // if self.colliders_vector.len() <= 1{
+    //   self.entity_vector_index.remove(&entity);
+    //   self.entity_buckets.remove(&entity);
+    //   self.colliders_vector.pop();
+    //   return;
+    // }
     
-    let last_index = self.colliders_vector.len() - 1;
-    let last_entity = self.colliders_vector[last_index];
+    // let last_index = self.colliders_vector.len() - 1;
+    // let last_entity = self.colliders_vector[last_index];
 
-    self.remove_entity_from_buckets(last_entity.0);
+    // self.remove_entity_from_buckets(last_entity.0);
 
-    if let Some(&index) = self.entity_vector_index.get(&entity) {
-      self.colliders_vector[index] = last_entity;
-      self.entity_vector_index.insert(last_entity.0, index);
-    }
+    // if let Some(&index) = self.entity_vector_index.get(&entity) {
+    //   self.colliders_vector[index] = last_entity;
+    //   self.entity_vector_index.insert(last_entity.0, index);
+    // }
 
-    self.entity_vector_index.remove(&entity);
-    self.entity_buckets.remove(&entity);
-    self.colliders_vector.pop();
+    // self.entity_vector_index.remove(&entity);
+    // self.entity_buckets.remove(&entity);
+    // self.colliders_vector.pop();
 
-    let new_buckets = get_buckets(&last_entity.2, &last_entity.1);
-    self.add_update_entity_to_buckets(last_entity.0, &last_entity.1, &last_entity.2, &new_buckets);
+    // let new_buckets = get_buckets(&last_entity.2, &last_entity.1);
+    // self.add_update_entity_to_buckets(last_entity.0, &last_entity.1, &last_entity.2, &new_buckets);
   }
 }
 
