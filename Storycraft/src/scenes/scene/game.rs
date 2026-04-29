@@ -30,40 +30,17 @@ pub fn set(
   prefabs::game_camera::GameCamera::spawn(&mut commands, config::CAMERA_ZOOM);
   prefabs::player::Player::spawn(&mut commands, &asset_server, Vec3::new(1.0, 1.0, 1.0));
 
-
-  let map_size = IVec2::new(-10, 10);
   // Tiles
-  for x in map_size.x..map_size.y{
-    for y in map_size.x..map_size.y{
-      let position = Vec3::new(x as f32, y as f32, 0.0);
-      prefabs::dungeon::DungeonTile::spawn(&mut commands, &asset_server, position);
-    }
-  }
+  prefabs::dungeon::DungeonTile::from_range(&mut commands, &asset_server, IVec3::new(-10, -10, 0), IVec3::new(10, 10, 0));
 
   // Walls
-  for x in map_size.x..map_size.y + 1{
-    let position = Vec3::new(x as f32, -map_size.x as f32, 0.0); 
-    prefabs::dungeon::DungeonWall::spawn(&mut commands, &asset_server, position);
+  prefabs::dungeon::DungeonWall::from_range(&mut commands, &asset_server, IVec3::new(-11, 10, 1), IVec3::new(9, 10, 0));
+  prefabs::dungeon::DungeonWall::from_range(&mut commands, &asset_server, IVec3::new(10, -11, 1), IVec3::new(10, 10, 0));
 
-    let position = Vec3::new(x as f32, -map_size.x as f32, 1.0); 
-    prefabs::dungeon::DungeonWall::spawn(&mut commands, &asset_server, position);
-  }
-  for y in map_size.x..map_size.y{
-    let position = Vec3::new(-map_size.x as f32, y as f32, 0.0); 
-    prefabs::dungeon::DungeonWall::spawn(&mut commands, &asset_server, position);
+  prefabs::collider::Collider::from_range(&mut commands, IVec3::new(-11, -11, 0), IVec3::new(10, -11, 0));
+  prefabs::collider::Collider::from_range(&mut commands, IVec3::new(-11, -12, 0), IVec3::new(-11, 10, 0));
 
-    let position = Vec3::new(-map_size.x as f32, y as f32, 1.0); 
-    prefabs::dungeon::DungeonWall::spawn(&mut commands, &asset_server, position);
-  }
-  for y in map_size.x..map_size.y + 1{
-    let position = Vec3::new(map_size.x as f32, y as f32, 0.0); 
-    prefabs::collider::Collider::spawn(&mut commands, position, Vec2::new(32.0, 32.0));
-  }
-  for x in map_size.x..map_size.y{
-    let position = Vec3::new(x as f32, map_size.x as f32, 0.0); 
-    prefabs::collider::Collider::spawn(&mut commands, position, Vec2::new(32.0, 32.0));
-  }
-
+  // Lamp
   prefabs::dungeon::DungeonStandingLamp::spawn(&mut commands, &asset_server, Vec3::new(-5.0, -5.0, 1.0));
 
 }

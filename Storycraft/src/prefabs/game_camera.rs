@@ -14,14 +14,14 @@ impl GameCamera{
     zoom: f32,
   ){
     commands.spawn((
-      Camera2d::default(),
       GameCamera,
-      tags::MainCamera,
-      tags::GameEntity,
+      Camera2d::default(),
       Projection::Orthographic(OrthographicProjection {
         scale: zoom,
         ..OrthographicProjection::default_2d()
-      })
+      }),
+      tags::MainCamera,
+      tags::GameEntity,
     ));
   }
 }

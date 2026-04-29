@@ -18,7 +18,6 @@ pub enum ScenesRegister{
   #[default]
   Null,
   Game,
-  CollisionBenchmark,
 }
 
 
@@ -27,7 +26,6 @@ impl Plugin for RegisteredScenePlugin {
   fn build(&self, app: &mut App) {
     app.add_systems(Update, (
       scene::game::set.run_if(scene::game::check),
-      scene::collision_benchmark::set.run_if(scene::collision_benchmark::check)
     ).run_if(plugins::scene_changed));
   }
 }
