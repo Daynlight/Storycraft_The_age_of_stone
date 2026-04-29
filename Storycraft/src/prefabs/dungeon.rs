@@ -1,9 +1,8 @@
 use bevy::prelude::*;
 
-use crate::utils::{tags, utils};
 use crate::config;
-use crate::mechanics::collisions;
-use crate::mechanics::movement;
+use crate::utils::{tags, utils};
+use crate::mechanics::{collisions, movement};
 
 
 
@@ -11,30 +10,49 @@ use crate::mechanics::movement;
 pub struct DungeonTile;
 
 impl DungeonTile{
+  pub fn from_range(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    start: IVec3,
+    end: IVec3,
+  ){
+    let size = (start - end).abs();
+
+    for x in 0..=size.x{
+      for y in 0..=size.y{
+        for z in 0..=size.z{
+          let position = Vec3::new((x + start.x) as f32, (y + start.y) as f32, (z + start.z) as f32);
+          DungeonTile::spawn(commands, asset_server, position);
+        }
+      }
+    }
+  }
+
   pub fn spawn(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     position: Vec3,
   ){
-    let txid = utils::hash2d(position.x.floor() as i32, position.y.floor() as i32, config::SEED) % 3;
+    let txid = utils::hash3d(position.x.floor() as i32, position.y.floor() as i32, position.z.floor() as i32, config::SEED) % 3;
     let texture = match txid {
-      0 => asset_server.load("Dungeon/Tiles/Tile_1.png"),
-      1 => asset_server.load("Dungeon/Tiles/Tile_2.png"),
-      _ => asset_server.load("Dungeon/Tiles/Tile_3.png")
+      0 => asset_server.load("Dungeon/Tiles/Tile1.png"),
+      1 => asset_server.load("Dungeon/Tiles/Tile2.png"),
+      _ => asset_server.load("Dungeon/Tiles/Tile3.png")
     };
 
     commands.spawn((
+      DungeonTile,
       Sprite{
         image: texture,
-        custom_size: Some(Vec2::new(32.0, 32.0)),
+        custom_size: Some(config::SPRITE_SIZE),
         ..default()
       }, 
-      tags::GameEntity,
-      movement::WorldPos(position),
       Transform{
         translation: utils::world_to_view(position),
         ..default()
-      }
+      },
+      movement::WorldPos(position),
+      tags::GameEntity,
     ));
   }
 }
@@ -45,25 +63,50 @@ impl DungeonTile{
 pub struct DungeonWall;
 
 impl DungeonWall{
+  pub fn from_range(
+    commands: &mut Commands,
+    asset_server: &Res<AssetServer>,
+    start: IVec3,
+    end: IVec3,
+  ){
+    let size = (start - end).abs();
+
+    for x in 0..=size.x{
+      for y in 0..=size.y{
+        for z in 0..=size.z{
+          let position = Vec3::new((x + start.x) as f32, (y + start.y) as f32, (z + start.z) as f32);
+          DungeonWall::spawn(commands, asset_server, position);
+        }
+      }
+    }
+  }
+
   pub fn spawn(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
     position: Vec3,
   ){
-    let texture = asset_server.load("Dungeon/Walls/Wall.png");
+    let txid = utils::hash3d(position.x.floor() as i32, position.y.floor() as i32, position.z.floor() as i32, config::SEED) % 3;
+    let texture = match txid {
+      0 => asset_server.load("Dungeon/Walls/Wall1.png"),
+      1 => asset_server.load("Dungeon/Walls/Wall2.png"),
+      _ => asset_server.load("Dungeon/Walls/Wall3.png")
+    };
+
     commands.spawn((
+      DungeonWall,
       Sprite{
         image: texture,
-        custom_size: Some(Vec2::new(32.0, 32.0)),
+        custom_size: Some(config::SPRITE_SIZE),
         ..default()
       },
-      collisions::CollisionBox::new(Vec2::ZERO, Vec2::new(16.0, 16.0)),
-      tags::GameEntity,
-      movement::WorldPos(position),
       Transform{
         translation: utils::world_to_view(position),
         ..default()
-      }
+      },
+      movement::WorldPos(position),
+      collisions::CollisionBox::new(Vec3::ZERO, Vec3::new(1.0, 1.0, 1.0)),
+      tags::GameEntity,
     ));
   }
 }
@@ -81,18 +124,19 @@ impl DungeonStandingLamp{
   ){
     let texture = asset_server.load("Dungeon/Lamp/Lamp.png");
     commands.spawn((
+      DungeonStandingLamp,
       Sprite{
         image: texture,
-        custom_size: Some(Vec2::new(32.0, 64.0)),
+        custom_size: Some(config::SPRITE_SIZE_LONG),
         ..default()
       },
-      collisions::CollisionBox::new(Vec2::new(0.0, -28.0), Vec2::new(16.0, 16.0)),
-      tags::GameEntity,
-      movement::WorldPos(position),
       Transform{
         translation: utils::world_to_view(position),
         ..default()
-      }
+      },
+      collisions::CollisionBox::new(Vec3::new(0.0, 0.0, -1.8), Vec3::new(0.5, 0.5, 0.2)),
+      movement::WorldPos(position),
+      tags::GameEntity,
     ));
   }
 }

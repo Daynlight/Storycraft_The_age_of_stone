@@ -37,7 +37,4 @@ fn scene_swap(
   if keyboard.just_pressed(KeyCode::Digit1){
     active_scene.0 = scenes::register::ScenesRegister::Game;
   }
-  if keyboard.just_pressed(KeyCode::Digit2){
-    active_scene.0 = scenes::register::ScenesRegister::CollisionBenchmark;
-  }
 }

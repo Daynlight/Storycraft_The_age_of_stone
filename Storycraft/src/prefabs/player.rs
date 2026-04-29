@@ -26,23 +26,23 @@ impl Player{
     let texture = asset_server.load("Placeholders/Player.png");
 
     commands.spawn((
+      Player,
       Sprite{
         image: texture,
-        custom_size: Some(Vec2::new(32.0, 32.0)),
+        custom_size: Some(config::SPRITE_SIZE),
         ..default()
       },
       Transform{
         translation: utils::world_to_view(position),
         ..default()
       },
-      Player,
-      tags::MainPlayer,
-      tags::GameEntity,
       mechanics::movement::WorldPos(position),
-      PlayerMovementCollider(mechanics::collisions::CollisionBox::new(Vec2::new(0.0, -13.0), Vec2::new(14.0, 5.0))),
+      PlayerMovementCollider(mechanics::collisions::CollisionBox::new(Vec3::new(0.0, 0.0, -0.95), Vec3::new(0.5, 0.5, 0.1))),
       // PlayerHitBoxCollider(mechanics::collisions::CollisionBox::new(Vec2::ZERO, Vec2::new(32.0, 64.0))),
       mechanics::movement::EntityMovementData::new(config::PLAYER_VELOCITY, config::PLAYER_ACCELERATION),
       mechanics::movement::EntityVelocityVector::default(),
+      tags::MainPlayer,
+      tags::GameEntity,
     ));
   }
 }

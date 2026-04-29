@@ -19,7 +19,7 @@ const INVERSE_WORLD_SIZE_MAT: Mat3 = Mat3::from_cols(
 const ISO_MAT: Mat3 = Mat3::from_cols(
   Vec3::new(1.0, 1.0, -1.0),
   Vec3::new(-1.0, 1.0, -1.0),
-  Vec3::new(0.0, 2.0, 1.0),
+  Vec3::new(0.0, (2.0 / 16.0) * 15.0, 1.0),
 );
 
 const INVERSE_ISO_MAT: Mat3 = Mat3::from_cols(
@@ -57,10 +57,11 @@ pub fn world_to_view_movement(
 }
 
 
-pub fn hash2d(x: i32, y: i32, seed: u32) -> u32 {
+pub fn hash3d(x: i32, y: i32, z: i32, seed: u32) -> u32 {
   let mut h = seed;
   h ^= (x as u32).wrapping_mul(374761393);
   h ^= (y as u32).wrapping_mul(668265263);
+  h ^= (z as u32).wrapping_mul(2147483647);
 
   h = h.wrapping_mul(1274126177);
 
