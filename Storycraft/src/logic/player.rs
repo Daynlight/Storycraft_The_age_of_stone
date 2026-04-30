@@ -45,31 +45,34 @@ impl Plugin for PlayerMovementEventsPlugin {
 
 
 fn update_velocity(
-  transform: &mut Transform,
-  position: &Vec3,
+  position: &mut Vec3,
   box1: collisions::CollisionBox,
   position2: Vec3,
   box2: collisions::CollisionBox,
   velocity_vector: &mut movement::EntityVelocityVector,
 ){
   let combined = box1.size + box2.size;
-  let delta = *position - position2;
+  let delta = (*position + box1.offset) - (position2 + box2.offset);
   let depth = combined / 2.0 - delta.abs();
 
-  let normal = if depth.x < depth.y { Vec2::new(delta.x.signum(), 0.0) } else { Vec2::new(0.0, delta.y.signum()) };
+  let normal = if depth.x < depth.y {
+    Vec2::new(delta.x.signum(), 0.0)
+  } else {
+    Vec2::new(0.0, delta.y.signum())
+  };
 
-  let new_velocity: Vec2 = (velocity_vector.0 - 2.0 * velocity_vector.0.dot(normal) * normal) * config::PLAYER_COLLISION_ENERGY_LOSS;
-  velocity_vector.0 = new_velocity;
+  velocity_vector.0 = (velocity_vector.0 - 2.0 * velocity_vector.0.dot(normal) * normal) * config::PLAYER_COLLISION_ENERGY_LOSS;
 
-  transform.translation = Vec3::new(normal.x * depth.x, normal.y * depth.y, 0.0);
+  position.x += normal.x * depth.x;
+  position.y += normal.y * depth.y;
 }
 
 
 fn set_player_velocity(
-  player: Single<(Entity, &mut movement::EntityVelocityVector, &movement::WorldPos, &mut Transform, &movement::EntityMovementData, &player::PlayerMovementCollider), With<tags::MainPlayer>>,
+  player: Single<(Entity, &mut movement::EntityVelocityVector, &mut movement::WorldPos, &movement::EntityMovementData, &player::PlayerMovementCollider), With<tags::MainPlayer>>,
   collision_boxes2: Res<collisions::CollisionBoxesRegister>,
 ) {
-  let (entity, mut velocity_vector, position, mut transform, entity_movement_data, collision_box) = player.into_inner();
+  let (entity, mut velocity_vector, mut position, entity_movement_data, collision_box) = player.into_inner();
 
   
   let direction = entity_movement_data.movement_direction;
@@ -85,7 +88,7 @@ fn set_player_velocity(
   
   let collision_list = collision_box.0.search_for_collisions(entity, position.0, &collision_boxes2);
   for (position2, collision_box2) in collision_list.iter(){
-    update_velocity(&mut transform, &position.0, collision_box.0, *position2, *collision_box2, &mut velocity_vector);
+    update_velocity(&mut position.0, collision_box.0, *position2, *collision_box2, &mut velocity_vector);
   }
 }
 

@@ -8,7 +8,7 @@ pub const PLAYER_VELOCITY: f32 = 150.0;
 pub const PLAYER_ACCELERATION: f32 = 70.0;
 pub const PLAYER_COLLISION_ENERGY_LOSS: f32 = 0.9;
 
-pub const BUCKETS_SIZE: Vec3 = Vec3::new(20.0, 20.0, 20.0);
+pub const BUCKETS_SIZE: Vec3 = Vec3::new(1.0, 1.0, 1.0);
 pub const BUCKET_BUFFER_SIZE: usize = 16;
 pub const FIXED_UPDATE_DELTA_TIME: f32 = 1./64.;
 

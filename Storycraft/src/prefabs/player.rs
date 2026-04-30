@@ -24,6 +24,7 @@ impl Player{
     position: Vec3,
   ){
     let texture = asset_server.load("Placeholders/Player.png");
+    let position = position + Vec3::new(0.0, 0.0, 0.5);
 
     commands.spawn((
       Player,
@@ -37,7 +38,7 @@ impl Player{
         ..default()
       },
       mechanics::movement::WorldPos(position),
-      PlayerMovementCollider(mechanics::collisions::CollisionBox::new(Vec3::new(0.0, 0.0, -0.95), Vec3::new(0.5, 0.5, 0.1))),
+      PlayerMovementCollider(mechanics::collisions::CollisionBox::new(Vec3::new(0.0, 0.0, -1.0), Vec3::new(0.5, 0.5, 0.1))),
       // PlayerHitBoxCollider(mechanics::collisions::CollisionBox::new(Vec2::ZERO, Vec2::new(32.0, 64.0))),
       mechanics::movement::EntityMovementData::new(config::PLAYER_VELOCITY, config::PLAYER_ACCELERATION),
       mechanics::movement::EntityVelocityVector::default(),

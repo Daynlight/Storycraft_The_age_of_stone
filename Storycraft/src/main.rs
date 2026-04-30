@@ -32,9 +32,9 @@ fn setup(
 
 fn scene_swap(
   keyboard: Res<ButtonInput<KeyCode>>,
-  mut active_scene: ResMut<scenes::plugins::ActiveScene>,
+  mut active_systems: ResMut<scenes::register::RunningSystemsRegister>,
 ) {
-  if keyboard.just_pressed(KeyCode::Digit1){
-    active_scene.0 = scenes::register::ScenesRegister::Game;
+  if keyboard.just_pressed(KeyCode::Space){
+    active_systems.player_movement = true;
   }
 }
