@@ -14,14 +14,9 @@ impl Collider{
     start: IVec3,
     end: IVec3,
   ){
-    let mut end = end + end.signum();
-    if end.x == 0 { end.x = 1 };
-    if end.y == 0 { end.y = 1 };
-    if end.z == 0 { end.z = 1 };
-
-    let size = (start - end).abs();
-    let position = (start + end).as_vec3() / 2.0;
-    Collider::spawn(commands, position, size.as_vec3());
+    let size = (start.as_vec3() - end.as_vec3()).abs() + Vec3::new(1.0, 1.0, 1.0);
+    let position = start.as_vec3() + (size - Vec3::new(1.0, 1.0, 1.0)) / 2.0;
+    Collider::spawn(commands, position, size);
   }
 
   pub fn spawn(

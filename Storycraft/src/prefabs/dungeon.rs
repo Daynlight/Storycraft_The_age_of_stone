@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use crate::config;
 use crate::utils::{tags, utils};
 use crate::mechanics::{collisions, movement};
+use crate::prefabs;
 
 
 
@@ -69,6 +70,7 @@ impl DungeonWall{
     start: IVec3,
     end: IVec3,
   ){
+    prefabs::collider::Collider::from_range(commands, start, end);
     let size = (start - end).abs();
 
     for x in 0..=size.x{
@@ -104,8 +106,8 @@ impl DungeonWall{
         translation: utils::world_to_view(position),
         ..default()
       },
+      // collisions::CollisionBox::new(Vec3::ZERO, Vec3::new(1.0, 1.0, 1.0)),
       movement::WorldPos(position),
-      collisions::CollisionBox::new(Vec3::ZERO, Vec3::new(1.0, 1.0, 1.0)),
       tags::GameEntity,
     ));
   }
@@ -123,6 +125,8 @@ impl DungeonStandingLamp{
     position: Vec3,
   ){
     let texture = asset_server.load("Dungeon/Lamp/Lamp.png");
+    let position = position + Vec3::new(0.0, 0.0, 1.8);
+
     commands.spawn((
       DungeonStandingLamp,
       Sprite{

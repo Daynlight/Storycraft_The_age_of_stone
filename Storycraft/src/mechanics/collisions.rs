@@ -24,9 +24,11 @@ impl CollisionBox{
 
   pub fn intersects(self, second: CollisionBox, position_a: Vec3, position_b: Vec3) -> bool {
     let boxes_size: Vec3 = (self.size + second.size) / 2.0;
-    let delta: Vec3 = (position_a + self.offset - position_b - second.offset).abs();
+    let delta: Vec3 = ((position_a + self.offset) - (position_b + second.offset)).abs();
 
-    return delta.x <= boxes_size.x && delta.y <= boxes_size.y && delta.z <= boxes_size.z;
+    let hit = delta.x <= boxes_size.x && delta.y <= boxes_size.y && delta.z <= boxes_size.z;
+
+    return hit;
   }
 
   pub fn search_for_collisions(
@@ -94,7 +96,7 @@ fn get_buckets(
   }
 
   buckets.shrink_to_fit();
-  return (IVec3::new(min_cell.x - max_cell.x, min_cell.x - max_cell.x, min_cell.z - max_cell.z), buckets);
+  return (IVec3::new(min_cell.x - max_cell.x, min_cell.y - max_cell.y, min_cell.z - max_cell.z), buckets);
 }
 
 
@@ -119,11 +121,11 @@ impl CollisionBoxesRegister{
         return true;
       }
 
-      if old_buckets.0.x != new_buckets.0.x || old_buckets.0.y != new_buckets.0.y {
+      if old_buckets.0.x != new_buckets.0.x || old_buckets.0.y != new_buckets.0.y || old_buckets.0.z != new_buckets.0.z {
         return true;
       }
 
-      if !new_buckets.1[0] != old_buckets.1[0] {
+      if new_buckets.1[0] != old_buckets.1[0] {
         return true;
       }
     }
