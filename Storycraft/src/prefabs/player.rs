@@ -1,9 +1,16 @@
 use bevy::prelude::*;
 
-use crate::tags;
-use crate::config::settings;
-use crate::mechanics::movement;
+use crate::mechanics;
+use crate::utils::{tags, utils};
+use crate::config;
 
+
+
+#[derive(Component, Deref)]
+pub struct PlayerMovementCollider(pub mechanics::collisions::CollisionBox);
+
+// #[derive(Component)]
+// pub struct PlayerHitBoxCollider(pub mechanics::collisions::CollisionBox);
 
 
 #[derive(Component)]
@@ -14,18 +21,29 @@ impl Player{
   pub fn spawn(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
+    position: Vec3,
   ){
-    let texture = asset_server.load("Restaurant/Cook/Idle/Cook_1.png");
-    let position = Vec2::new(64.0, 0.0);
+    let texture = asset_server.load("Placeholders/Player.png");
+    let position = position + Vec3::new(0.0, 0.0, 0.5);
 
     commands.spawn((
-      Sprite::from_image(texture),
-      Transform::from_xyz(position.x, position.y, 0.0),
       Player,
+      Sprite{
+        image: texture,
+        custom_size: Some(config::SPRITE_SIZE),
+        ..default()
+      },
+      Transform{
+        translation: utils::world_to_view(position),
+        ..default()
+      },
+      mechanics::movement::WorldPos(position),
+      PlayerMovementCollider(mechanics::collisions::CollisionBox::new(Vec3::new(0.0, 0.0, -1.0), Vec3::new(0.5, 0.5, 0.1))),
+      // PlayerHitBoxCollider(mechanics::collisions::CollisionBox::new(Vec2::ZERO, Vec2::new(32.0, 64.0))),
+      mechanics::movement::EntityMovementData::new(config::PLAYER_VELOCITY, config::PLAYER_ACCELERATION),
+      mechanics::movement::EntityVelocityVector::default(),
       tags::MainPlayer,
       tags::GameEntity,
-      movement::components::EntityVelocityVector::default(),
-      movement::components::EntityMovementData::new(settings::PLAYER_VELOCITY, settings::PLAYER_ACCELERATION),
     ));
   }
 }

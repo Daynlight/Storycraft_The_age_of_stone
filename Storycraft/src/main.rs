@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 mod config;
-mod tags;
+mod utils;
 mod mechanics;
 mod logic;
 mod scenes;
@@ -11,18 +11,20 @@ mod prefabs;
 
 fn main() {
   App::new()
-    .add_plugins(DefaultPlugins)
+    .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+    // .add_plugins(DefaultPlugins)
     .add_systems(Startup, setup)
     .add_systems(PreUpdate, scene_swap)
-    .add_plugins(scenes::systems::ScenePlugin)
-    .add_plugins(mechanics::systems::MechanicsPlugin)
-    .add_plugins(logic::systems::LogicPlugin)
+    .add_plugins(scenes::plugins::ScenePlugin)
+    .add_plugins(mechanics::plugins::MechanicsPlugin)
+    .add_plugins(logic::plugins::LogicPlugin)
+    .add_plugins(utils::debug::DebugPlugin)
     .run();
 }
 
 
 fn setup(
-  mut active_scene: ResMut<scenes::systems::ActiveScene>,
+  mut active_scene: ResMut<scenes::plugins::ActiveScene>,
 ) {
   active_scene.0 = scenes::register::ScenesRegister::Game;
 }
@@ -30,12 +32,9 @@ fn setup(
 
 fn scene_swap(
   keyboard: Res<ButtonInput<KeyCode>>,
-  mut active_scene: ResMut<scenes::systems::ActiveScene>,
+  mut active_systems: ResMut<scenes::register::RunningSystemsRegister>,
 ) {
-  if keyboard.just_pressed(KeyCode::Digit1){
-    active_scene.0 = scenes::register::ScenesRegister::Game;
-  }
-  if keyboard.just_pressed(KeyCode::Digit2){
-    active_scene.0 = scenes::register::ScenesRegister::CollisionBenchmark;
+  if keyboard.just_pressed(KeyCode::Space){
+    active_systems.player_movement = true;
   }
 }

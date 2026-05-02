@@ -1,3 +1,3 @@
 pub mod player;
 pub mod camera;
-pub mod systems;
+pub mod plugins;
