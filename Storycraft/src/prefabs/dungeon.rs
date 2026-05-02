@@ -125,7 +125,7 @@ impl DungeonStandingLamp{
     position: Vec3,
   ){
     let texture = asset_server.load("Dungeon/Lamp/Lamp.png");
-    let position = position + Vec3::new(0.0, 0.0, 1.8);
+    let position = position + Vec3::new(0.0, 0.0, 1.3);
 
     commands.spawn((
       DungeonStandingLamp,
