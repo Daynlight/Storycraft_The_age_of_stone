@@ -1,100 +1,40 @@
 use bevy::prelude::*;
 
-
-
-
-
-
+mod config;
+mod utils;
+mod mechanics;
+mod logic;
+mod scenes;
+mod prefabs;
 
 
 
 fn main() {
-  let mut app: ::bevy::app::App = ::bevy::app::App::new();
-  app.add_plugins(DefaultPlugins);
-  app.add_systems(Startup, setup);
-  app.add_systems(Update, camera_move);
-  app.add_systems(Update, camera_zoom);
-  app.run();
+  App::new()
+    .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
+    // .add_plugins(DefaultPlugins)
+    .add_systems(Startup, setup)
+    .add_systems(PreUpdate, scene_swap)
+    .add_plugins(scenes::plugins::ScenePlugin)
+    .add_plugins(mechanics::plugins::MechanicsPlugin)
+    .add_plugins(logic::plugins::LogicPlugin)
+    .add_plugins(utils::debug::DebugPlugin)
+    .run();
 }
 
-
-
-#[derive(Component)]
-struct MainCamera;
 
 fn setup(
-  mut commands: Commands,
-  asset_server: Res<AssetServer>,
+  mut active_scene: ResMut<scenes::plugins::ActiveScene>,
 ) {
-  // add Camera
-  commands.spawn((Camera2dBundle::default(), MainCamera));
-
-  // add Counter
-  let texture = asset_server.load("Restaurant/Counter/Counter.png");
-  commands.spawn(SpriteBundle {
-    texture,
-    transform: Transform::from_xyz(0.0, 0.0, 0.0),
-    ..default()
-  });
-
-  commands.spawn(SpriteBundle {
-    sprite: Sprite {
-      color: Color::rgb(1.0, 0.0, 0.0),
-      custom_size: Some(Vec2::new(32.0, 32.0)),
-      ..default()
-    },
-    transform: Transform::from_xyz(64.0, 0.0, 0.0),
-    ..default()
-  });
+  active_scene.0 = scenes::register::ScenesRegister::Game;
 }
 
 
-
-
-const CAMERA_VELOCITY: f32 = 200.0;
-
-fn camera_move(
+fn scene_swap(
   keyboard: Res<ButtonInput<KeyCode>>,
-  time: Res<Time>,
-  mut query: Query<&mut Transform, With<MainCamera>>,
+  mut active_systems: ResMut<scenes::register::RunningSystemsRegister>,
 ) {
-  let speed = CAMERA_VELOCITY * time.delta_seconds();
-
-  for mut transform in &mut query {
-    if keyboard.pressed(KeyCode::KeyW) {
-      transform.translation.y += speed;
-    }
-    if keyboard.pressed(KeyCode::KeyS) {
-      transform.translation.y -= speed;
-    }
-    if keyboard.pressed(KeyCode::KeyA) {
-      transform.translation.x -= speed;
-    }
-    if keyboard.pressed(KeyCode::KeyD) {
-      transform.translation.x += speed;
-    }
-  }
-}
-
-const CAMERA_ZOOM_SPEED: f32 = 1.3;
-const CAMERA_ZOOM_RANGE: Vec2 = Vec2::new(0.1, 2.0);
-
-fn camera_zoom(
-  keyboard: Res<ButtonInput<KeyCode>>,
-  time: Res<Time>,
-  mut query: Query<&mut OrthographicProjection, With<MainCamera>>,
-) {
-  let delta = CAMERA_ZOOM_SPEED * time.delta_seconds();
-
-  for mut projection in &mut query {
-    if keyboard.pressed(KeyCode::KeyP) {
-      projection.scale -= delta;
-    }
-
-    if keyboard.pressed(KeyCode::KeyL) {
-      projection.scale += delta;
-    }
-
-    projection.scale = projection.scale.clamp(CAMERA_ZOOM_RANGE.x, CAMERA_ZOOM_RANGE.y);
+  if keyboard.just_pressed(KeyCode::Space){
+    active_systems.player_movement = true;
   }
 }
